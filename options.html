@@ -1,0 +1,140 @@
+<!--
+Copyright:
+
+	Copyright (C) 2013 Hunter Paolini <me@hpaolini.com>
+
+License:
+
+	This file is part of tinyFilter.
+
+	tinyFilter is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	tinyFilter is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with tinyFilter; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+-->
+<html>
+	<head>
+		<title>tinyFilter - Options</title>
+		<link rel="stylesheet" href="style.css" type="text/css"/>
+		<script type="text/javascript" src="2.0.0-crypto-sha256.js"></script>
+		<script type="text/javascript" src="options.js"></script>
+	</head>
+	<body>
+		<div style="width:510px;margin:0 auto;color:#aaa;">
+			<h1>tinyFilter</h1>
+			&nbsp;&nbsp;by <a href="https://github.com/hpaolini/tinyFilter-chrome">Hunter Paolini</a>
+		</div> 
+		<div class="box">
+			<div class="header">General Settings</div>
+			<div class="settings">
+				<div style="float:right;position:relative;top:-2px">
+					<button id="btn_pass" disabled="true">Set Password</button>
+				</div>
+				<label><input type="checkbox" id="pwd_status"/> Enable Password Protection</label>
+			</div>
+		</div>
+		<div class="box">
+			<div class="header">Content Filter</div>
+			<div class="settings">
+				<div style="float:right;position:relative;top:-2px">
+					<button id="btn_advSettings">Advanced Settings</button>
+				</div>
+				<input id="cf_status" type="checkbox"/>Enable Content Filter<br/><br/>
+				<div id="adv_settings" class="advanced">
+					<label><input type="checkbox" id="adv_stop"/> Stop all traffic</label><br/>
+					<label><input type="checkbox" id="adv_reason"/> Show reason for blockage</label><br/>
+					<div>
+						<label>
+							Warning message:<br/>
+							<input type="text" id="adv_warning" class="wide"/>
+						</label>
+					</div>
+					<div>
+						<label>
+							Redirect blocked pages to:<br/>
+							<input type="text" id="adv_redirect" class="wide"/>
+						</label>
+					</div>
+				</div>
+				<div class="listbox">
+					<div class="listbox_head" id="lst_bs">
+						<span class="link" style="float:right">&#9662;</span>
+						<b>Blocked Sites</b>
+					</div>
+					<div id="blocked_url"></div>
+				</div>
+				<div class="listbox">
+					<div class="listbox_head" id="lst_bk">
+						<span class="link" style="float:right">&#9662;</span>
+						<b>Blocked Keywords</b>
+					</div>
+					<div id="blocked_word"></div>
+				</div>
+				<div class="listbox">
+					<div class="listbox_head" id="lst_ts">
+						<span class="link" style="float:right">&#9662;</span>
+						<b>Trusted Sites</b>
+					</div>
+					<div id="trusted_url"></div>
+				</div>
+				<br/>
+				<form>
+					<input type="text" id="keyword_cf" maxlength="20"/>
+					<input type="button" id="add_cf" value="Add"/>
+					<label><input id="bu" type="radio" name="group1" value="0"/> Block Site</label>
+					<label><input id="bw" type="radio" name="group1" value="1"/> Block Keyword</label>
+					<label><input id="au" type="radio" name="group1" value="2"/> Trust Site</label>
+				</form>
+			</div>
+		</div>
+		<div class="box">
+			<div class="header">Profanity Filter</div>
+			<div class="settings">
+				<input id="pf_status" type="checkbox"/>Enable Profanity Filter<br/><br/>
+				<div class="listbox">
+					<div class="listbox_head" id="lst_pf">
+						<span class="link" style="float:right">&#9662;</span>
+						<b>Profanity Filter</b>
+					</div>
+					<div id="profanity_word"></div>
+				</div>
+				<br/>
+				<form>
+					<input type="text" id="keyword_pf" maxlength="20"/>
+					<input type="button" id="add_pf" value="Add"/>
+				</form>
+			</div>
+		</div>
+		<div class="box">
+			<div class="header">List Subscription</div>
+			<div class="settings">
+				<div class="link" style="float:right;position:relative;top:-2px">
+					<button id="btn_generate">Generate Your List</button>
+				</div>
+				<label><input type="checkbox" id="ls_status"/> Enable List Subscription</label>
+				<br/><br/>
+				<input type="text" id="ls_url" class="wide"/>
+			</div>
+		</div>
+		<div id="action_buttons">
+			<div style="float:right">
+				<button id="btn_reset">Reset</button>
+				<button id="btn_save">Save</button>
+			</div>
+			<div id="status" style="visibility:hidden">
+				<img style="position:relative;top:4px;margin-right:4px" src="loader.gif" width="16" height="16">
+				Options Saved
+			</div>
+		</div>
+	</body>
+</html>
+
