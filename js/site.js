@@ -1,30 +1,14 @@
 /*
-Copyright:
+    Copyright (c) 2015 Aurel Jared Dantis <jareddantis@gmail.com>,
+                  2013 Hunter Paolini <me@hpaolini.com>.
 
-    Copyright (C) 2013 Hunter Paolini <me@hpaolini.com>
-
-License:
-
-		This file is part of tinyFilter.
-
-    tinyFilter is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    tinyFilter is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with tinyFilter; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+    This file is part of the Kaomojify project, which can be accessed
+    at https://github.com/aureljared/kaomojify.
+    The project is governed by the GNU General Public License, which can
+    alse be found on the project page under the filename 'LICENSE.txt'.
 */
 
-/*todo: 
-	temporary access
-*/
+// TODO: temporary access
 
 var tinyFilter = {
 	 doc: document,
@@ -37,7 +21,7 @@ var tinyFilter = {
 			var found = address.indexOf(list[l]);
 			if(found!==-1){
 				if(exam===1){
-					window.stop(); //rember, this loads on document_start
+					window.stop(); // remember, this loads on document_start
 					that.action("Detected: \"" + list[l] + "\" in the address.");
 				}
 				that.detection = true;

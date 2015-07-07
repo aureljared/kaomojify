@@ -1,3 +1,13 @@
+/*
+    Copyright (c) 2015 Aurel Jared Dantis <jareddantis@gmail.com>,
+                  2013 Hunter Paolini <me@hpaolini.com>.
+
+    This file is part of the Kaomojify project, which can be accessed
+    at https://github.com/aureljared/kaomojify.
+    The project is governed by the GNU General Public License, which can
+    alse be found on the project page under the filename 'LICENSE.txt'.
+*/
+
 {
 	"manifest_version": 2,
 	// "update_url": "http://clients2.google.com/service/update2/crx",
@@ -6,20 +16,20 @@
 	"author": "Aurel Jared Dantis",
 	"version": "0.1",
 	"icons": {
-		"16": "icon-16.png",
-		"48": "icon-48.png",
-		"128": "icon-128.png"
+		"16": "img/icon-16.png",
+		"48": "img/icon-48.png",
+		"128": "img/icon-128.png"
 	},
 	"browser_action": {
-		"default_icon": "icon.png",
-		"default_title": "tinyFilter",
+		"default_icon": "img/icon.png",
+		"default_title": "Kaomojify",
 		"default_popup": "popup.html"
 	},
 	"permissions": [
 		"http://*/*", "https://*/*", "tabs"
 	],
 	"background": {
-		"scripts" : ["background.js", "2.0.0-crypto-sha256.js"],
+		"scripts" : ["js/background.js", "js/crypto.min.js"],
 		"persistent" : true
 	},
 	"options_ui": {
@@ -30,15 +40,15 @@
 		{
 			"matches": ["http://*/*", "https://*/*"],
 			"js": [
-				"site.js",
-				"content.js"
+				"js/site.js",
+				"js/content.js"
 			],
 			"run_at": "document_start",
 			"all_frames": true
 		},{
 			"matches": ["http://*/*", "https://*/*"],
 			"js": [
-				"overlay.js" 
+				"js/overlay.js" 
 			],
 			"run_at": "document_end",
 			"all_frames": true

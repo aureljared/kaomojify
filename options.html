@@ -1,37 +1,23 @@
+<!DOCTYPE html>
 <!--
-Copyright:
+    Copyright (c) 2015 Aurel Jared Dantis <jareddantis@gmail.com>,
+                  2013 Hunter Paolini <me@hpaolini.com>.
 
-	Copyright (C) 2013 Hunter Paolini <me@hpaolini.com>
-
-License:
-
-	This file is part of tinyFilter.
-
-	tinyFilter is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-
-	tinyFilter is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with tinyFilter; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+    This file is part of the Kaomojify project, which can be accessed
+    at https://github.com/aureljared/kaomojify.
+    The project is governed by the GNU General Public License, which can
+    alse be found on the project page under the filename 'LICENSE.txt'.
 -->
 <html>
 	<head>
 		<title>tinyFilter - Options</title>
-		<link rel="stylesheet" href="style.css" type="text/css"/>
-		<script type="text/javascript" src="2.0.0-crypto-sha256.js"></script>
-		<script type="text/javascript" src="options.js"></script>
+		<link rel="stylesheet" href="css/style.css" type="text/css"/>
+		<script type="text/javascript" src="js/crypto.min.js"></script>
+		<script type="text/javascript" src="js/options.js"></script>
 	</head>
 	<body>
-		<div style="width:510px;margin:0 auto;color:#aaa;">
-			<h1>tinyFilter</h1>
-			&nbsp;&nbsp;by <a href="https://github.com/hpaolini/tinyFilter-chrome">Hunter Paolini</a>
+		<div class="top">
+			<span class="name">Kaomojify</span><span class="auth">by <a href="https://github.com/aureljared/kaomojify">Aurel Jared Dantis</a></span>
 		</div> 
 		<div class="box">
 			<div class="header">General Settings</div>
@@ -131,7 +117,6 @@ License:
 				<button id="btn_save">Save</button>
 			</div>
 			<div id="status" style="visibility:hidden">
-				<img style="position:relative;top:4px;margin-right:4px" src="loader.gif" width="16" height="16">
 				Options Saved
 			</div>
 		</div>

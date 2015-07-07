@@ -1,63 +1,51 @@
 <!DOCTYPE html>
 <!--
-Copyright:
+    Copyright (c) 2015 Aurel Jared Dantis <jareddantis@gmail.com>,
+                  2013 Hunter Paolini <me@hpaolini.com>.
 
-    Copyright (C) 2013 Hunter Paolini <me@hpaolini.com>
-
-License:
-
-		This file is part of tinyFilter.
-
-    tinyFilter is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    tinyFilter is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with tinyFilter; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+    This file is part of the Kaomojify project, which can be accessed
+    at https://github.com/aureljared/kaomojify.
+    The project is governed by the GNU General Public License, which can
+    alse be found on the project page under the filename 'LICENSE.txt'.
 -->
 <html>
-<head>
-<style type="text/css">
-body {
-padding:0;
-margin:0;
-background-color #FDFDFD;
-min-width:100px;
-overflow-x:hidden;
-}
-button {
-color:#0d0d0d;
-margin:0;
-background-color:#FDFDFD;
-border:1px solid #FDFDFD;
-padding:2px 4px;
-text-align:left;
-width:100%;
-}
-button:hover {
-cursor:pointer !important;
-background-color:#F3F7FC;
-border:1px solid #D2DBED;
-border-bottom-left-radius:2px 2px;
-border-top-left-radius:2px 2px;
-border-top-right-radius:2px 2px;
-border-bottom-right-radius:2px 2px;
-}
-</style>
-</head>
-<body>
-<button id="btn_ppbs" onclick="actionSite(0)">Block this site</button>
-<button id="btn_ppts" onclick="actionSite(1)">Trust this site</button>
-<hr/>
-<button id="btn_ppopt" onclick="openOptions()">Options...</button>
-</body>
-		<script type="text/javascript" src="popup.js"></script>
+    <head>
+        <style type="text/css">
+            html {
+                min-width: 200px;
+            }
+            body {
+                padding: 0px;
+                margin: 0 auto;
+                overflow-x: hidden;
+            }
+            .content { padding: 10px 0px; }
+            button, button:hover, button:focus {
+                padding: 5px 20px;
+                font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+                font-size: 15px;
+                text-decoration: none;
+                -webkit-transition: all 0.3s ease;
+                transition: all 0.3s ease;
+                background: none;
+                min-width: 200px;
+                border: none;
+                text-align: left;
+            }
+            hr { width: 160px; }
+            button:hover {
+                cursor: link;
+                background-color: #d7d7d7;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            <button id="btn_ppbs" onclick="actionSite(0)"><span class="buttontext">Block this site</span></button>
+            <button id="btn_ppts" onclick="actionSite(1)"><span class="buttontext">Trust this site</span></button>
+            <hr/>
+            <button id="btn_ppopt" onclick="openOptions()"><span class="buttontext">Options...</span></button>
+        </div>
+        <script type="text/javascript" src="js/popup.js"></script>
+    </body>
 </html>
-

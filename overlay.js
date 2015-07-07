@@ -1,1 +1,0 @@
-tinyFilter.content_start();
