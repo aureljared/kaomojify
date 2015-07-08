@@ -1,5 +1,7 @@
-html { overflow-y: scroll; }
+html { overflow-x: hidden; overflow-y: hidden; }
 body {
+	overflow-x: hidden;
+	overflow-y: auto;
     display: block !important;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-size: 12px;
@@ -8,6 +10,8 @@ body {
     margin: 0 auto;
 }
 .content { padding: 95px 10px 10px 10px; }
+
+/*::-webkit-scrollbar, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner { background-color: rgba(0,0,0,0); }*/
 
 a, a:hover, a:focus {
 	-webkit-transition: all 0.3s ease;

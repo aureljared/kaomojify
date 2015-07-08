@@ -1295,7 +1295,7 @@
 </style>
 
 
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic">
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic">
 <style is="custom-style">
 
   :root {
@@ -2409,13 +2409,15 @@
 		<div class="content">
 			<div class="card">
 				<div class="card-content">
+					<div class="card-title">Extension security</div>
 					<div class="card-section">
 						<div>
-							<label>Enable password protection</label>
+							<label>Enable password</label>
 							<paper-toggle-button id="pwd_status"></paper-toggle-button>
 						</div>
 						<div id="pwfield" style="display:none;margin-top:-5px;">
 							<paper-input type="password" label="Max. 120 characters"></paper-input>
+							<paper-button id="setpass" style="float:right;">save</paper-button>
 						</div>
 					</div>
 				</div>
@@ -2429,20 +2431,63 @@
 					</div>
 					<div class="card-section">
 						<label>Stop all traffic</label>
-						<paper-toggle-button checked="" id="adv_stop"></paper-toggle-button>
+						<paper-toggle-button id="adv_stop"></paper-toggle-button>
 					</div>
 					<div class="card-section">
 						<label>Show reason for blockage</label>
-						<paper-toggle-button checked="" id="adv_reason"></paper-toggle-button>
+						<paper-toggle-button id="adv_reason"></paper-toggle-button>
 						<div id="reasonfield">
-							<paper-input label="Reason"></paper-input>
+							<paper-input id="adv_warning" label="Reason"></paper-input>
 						</div>
 					</div>
 					<div class="card-section">
 						<label>Redirect blocked pages</label>
-						<paper-toggle-button checked="" id="cf_redirect"></paper-toggle-button>
-						<div id="redirfield">
+						<paper-toggle-button id="adv_redirect"></paper-toggle-button>
+						<div id="redirfield" style="display:none;">
 							<paper-input label="Redirect to..."></paper-input>
+						</div>
+					</div>
+					<div class="card-section">
+						<label>Edit lists</label>
+						<paper-button id="lst_bs" style="color:blue;">Sites</paper-button>
+						<paper-button id="lst_bk" style="color:blue;">Keywords</paper-button>
+					</div>
+					<div class="card-section" id="siteblacklist" style="display:none;">
+						<label>Site blacklist</label>
+						<div id="blocked_url"></div>
+						<label>Site whitelist</label>
+						<div id="trusted_url"></div>
+					</div>
+					<div class="card-section" id="wordblacklist" style="display:none;">
+						<label>Custom keyword blacklist</label>
+						<div id="blocked_word"></div>
+						<label>Keyword whitelist</label>
+						<div id="allowed_word"></div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-content">
+					<div class="card-title">Profanity filter settings</div>
+					<div class="card-section">
+						<label>Enable profanity filter</label>
+						<paper-toggle-button checked="" id="pf_status"></paper-toggle-button>
+					</div>
+					<div class="card-section">
+						<label>Custom profanity word list</label>
+						<paper-button id="lst_pf" style="color:blue;">Edit</paper-button>
+						<div id="profanity_word" style="display:none;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-content">
+					<div class="card-title">Subscription settings</div>
+					<div class="card-section">
+						<label>Enable list subscription</label>
+						<paper-toggle-button id="ls_status"></paper-toggle-button>
+						<div id="listfield" style="display:none;">
+							<paper-input label="Enter list subscription URL" id="ls_url"></paper-input>
 						</div>
 					</div>
 				</div>
@@ -2450,12 +2495,26 @@
 			<div class="card">
 				<div class="card-content">
 					<div class="card-title">Advanced settings</div>
+					<div class="card-section">
+						<label>Reset Kaomojify</label>
+						<paper-button style="color:red;" id="btn_reset">Reset...</paper-button>
+					</div>
 				</div>
 			</div>
-			<div class="resetbutton">
-				<paper-button style="color: red;" id="btn_reset">Reset Settings</paper-button>
+			<div class="card">
+				<div class="card-content">
+					<div class="card-title">About Kaomojify</div>
+					<div class="card-section">
+						<label>Kaomojify version <span id="version"></span></label><br>
+						<label>Made with ♥ by Aurel Jared Dantis.</label><br><br>
+						<paper-button><a href="https://aureljared.tk/" target="_blank" title="homepage">Visit my page</a></paper-button>
+						<paper-button><a href="https://aureljared.tk/projects/kaomojify" target="_blank" title="homepage">Visit project page</a></paper-button>
+						<br><paper-button id="bitcoin">Donate via BitCoin</paper-button>
+						
+					</div>
+				</div>
 			</div>
-			<paper-toast text="Preferences saved." id="status"></paper-toast>
+			<paper-toast text="Hello World!" id="status"></paper-toast>
 		</div>
 		<div class="fab"><paper-fab id="btn_save" icon="save"></paper-fab></div>
 	
@@ -2464,7 +2523,6 @@
 
 <script src="js/polymer-project.js"></script>
 <script type='text/javascript' src='js/crypto.min.js'></script>
-<script type='text/javascript' src='js/options.js'></script>
 <script type='text/javascript' src='js/material.options.js'></script>
 <script type='text/javascript' src='bower/jquery/dist/jquery.min.js'></script>
 </body></html>

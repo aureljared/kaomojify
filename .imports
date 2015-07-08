@@ -11,7 +11,6 @@ poly=(
 # External scripts
 js=(
 	js/crypto.min.js
-	js/options.js
 	js/material.options.js
 	bower/jquery/dist/jquery.min.js
 )

@@ -45,7 +45,7 @@ var Dom = {
 		var el = this.get(el);
 		el.parentNode.removeChild(el);
 	}
-};
+}
 
 var KaomojifierEvent = {
 	add: function() {
