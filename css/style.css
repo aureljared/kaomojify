@@ -31,22 +31,12 @@ header > div {
 	color: #fff;
 }
 .fab {
-	border-radius: 150px;
 	width: 50px;
 	height: 50px;
-	background-color: #FF4081;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
 	top: 42px;
 	right: 15px;
-	box-shadow: 0px 0px 8px #383737;
-	cursor: pointer;
 }
-.fab:hover { box-shadow: 1px 3px 13px #383737; }
-.fab > i {
-    margin-top: 40%;
-    margin-left: -5px;
-}
+
 .name, .auth { padding-right: 5px; }
 .name { font-size: 20px; }
 .auth { font-size: 13px; }

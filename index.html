@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2015 Aurel Jared Dantis <jareddantis@gmail.com>,
+                  2013 Hunter Paolini <me@hpaolini.com>.
+
+    This file is part of the Kaomojify project, which can be accessed
+    at https://github.com/aureljared/kaomojify.
+    The project is governed by the GNU General Public License, which can
+    alse be found on the project page under the filename 'LICENSE.txt'.
+-->
+<html>
+	<head>
+		<title>tinyFilter - Options</title>
+		<link rel="stylesheet" href="css/style.css" type="text/css"/>
+		<link rel="stylesheet" href="css/font-awesome.min.css" type="text/css"/>
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic" type="text/css"/>
+		<!-- build.sh - imports -->
+	</head>
+	<body>
+		<header>
+			<div>
+				<span class="name">Kaomojify Preferences</span>
+			</div>
+			<div id="btn_save" class="fab"><paper-fab icon="save"></paper-fab></div>
+		</header>
+		<div class="content">
+			<div class="box">
+				<div class="header">General Settings</div>
+				<div class="settings">
+					<div style="float:right;position:relative;top:-2px">
+						<button id="btn_pass" disabled="true">Set Password</button>
+					</div>
+					<label><input type="checkbox" id="pwd_status"/> Enable Password Protection</label>
+				</div>
+			</div>
+			<div class="box">
+				<div class="header">Content Filter</div>
+				<div class="settings">
+					<div style="float:right;position:relative;top:-2px">
+						<button id="btn_advSettings">Advanced Settings</button>
+					</div>
+					<input id="cf_status" type="checkbox"/>Enable Content Filter<br/><br/>
+					<div id="adv_settings" class="advanced">
+						<label><input type="checkbox" id="adv_stop"/> Stop all traffic</label><br/>
+						<label><input type="checkbox" id="adv_reason"/> Show reason for blockage</label><br/>
+						<div>
+							<label>
+								Warning message:<br/>
+								<input type="text" id="adv_warning" class="wide"/>
+							</label>
+						</div>
+						<div>
+							<label>
+								Redirect blocked pages to:<br/>
+								<input type="text" id="adv_redirect" class="wide"/>
+							</label>
+						</div>
+					</div>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_bs">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Blocked Sites</b>
+						</div>
+						<div id="blocked_url"></div>
+					</div>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_bk">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Blocked Keywords</b>
+						</div>
+						<div id="blocked_word"></div>
+					</div>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_ts">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Trusted Sites</b>
+						</div>
+						<div id="trusted_url"></div>
+					</div>
+					<br/>
+					<form>
+						<input type="text" id="keyword_cf" maxlength="120" size="20"/>
+						<input type="button" id="add_cf" value="Add"/>
+						<label><input id="bu" type="radio" name="group1" value="0"/> Block Site</label>
+						<label><input id="bw" type="radio" name="group1" value="1"/> Block Keyword</label>
+						<label><input id="au" type="radio" name="group1" value="2"/> Trust Site</label>
+					</form>
+				</div>
+			</div>
+			<div class="box">
+				<div class="header">Profanity Filter</div>
+				<div class="settings">
+					<input id="pf_status" type="checkbox"/>Enable Profanity Filter<br/><br/>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_pf">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Profanity Filter</b>
+						</div>
+						<div id="profanity_word"></div>
+					</div>
+					<br/>
+					<form>
+						<input type="text" id="keyword_pf" maxlength="120" size="20"/>
+						<input type="button" id="add_pf" value="Add"/>
+					</form>
+				</div>
+			</div>
+			<div class="box">
+				<div class="header">List Subscription</div>
+				<div class="settings">
+					<div class="link" style="float:right;position:relative;top:-2px">
+						<button id="btn_generate">Generate Your List</button>
+					</div>
+					<label><input type="checkbox" id="ls_status"/> Enable List Subscription</label>
+					<br/><br/>
+					<input type="text" id="ls_url" class="wide"/>
+				</div>
+			</div>
+			<div id="action_buttons">
+				<div style="float:right">
+					<button id="btn_reset">Reset</button>
+				</div>
+				<div id="status" style="visibility:hidden">
+					Options Saved
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+

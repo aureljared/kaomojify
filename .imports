@@ -1,0 +1,8 @@
+js=(
+	js/crypto.min.js
+	js/options.js
+)
+poly=(
+	paper-fab/paper-fab.html
+	paper-button/paper-button.html
+)

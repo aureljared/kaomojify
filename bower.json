@@ -1,0 +1,12 @@
+{
+	"name": "kaomojify",
+	"version": "0.1",
+	"dependencies": {
+		"polymer": "Polymer/polymer#^1.0.0",
+		"jquery": "jquery#1.11.1",
+		"iron-icons": "PolymerElements/iron-icons",
+		"paper-fab": "PolymerElements/paper-fab",
+		"paper-button": "PolymerElements/paper-button",
+		"paper-ripple": "PolymerElements/paper-ripple"
+	}
+}

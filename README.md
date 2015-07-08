@@ -5,11 +5,17 @@ kaomojify
 
 It replaces all swear/curse/bad words in its list (`default.txt`) with a random selection from 300 kaomojis. Kaomojify's kaomoji list is from [Emot.es.](http://emot.es)
 
+## Building
+
+Kaomojify's options page uses dependencies from the Polymer Project, which are available from Bower.
+
+Should you decide to add any scripts or HTML imports to the options page, add your desired entries to `.imports` and build the options page through `./build.sh index.html options.html`.
+
 ## Progress
 
 - [x] Rename project to Kaomojify
 - [x] Use random kaomojis in place of "***"
-- [ ] **Material-ish UI**
+- [ ] **Material UI**
 - [ ] Update mechanism for kaomoji and profanity databases
 
 ## Download
