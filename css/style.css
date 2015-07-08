@@ -11,13 +11,26 @@ body {
 }
 .content { padding: 95px 10px 10px 10px; }
 
-/*::-webkit-scrollbar, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner { background-color: rgba(0,0,0,0); }*/
+.login {
+	position: fixed;
+	width: 400px;
+	height: 100%;
+	z-index: 10;
+	background-color: #fff;
+}
+.login-body {
+	position: absolute;
+	left: 50px;
+	top: 150px;
+}
+#loginpw { width: 300px; }
 
-a, a:hover, a:focus {
+
+#logintitle, a, a:hover, a:focus {
 	-webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
-    text-decoration: none;
 }
+a, a:hover, a:focus { text-decoration: none; }
 
 header {
 	width: 400px;

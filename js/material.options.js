@@ -12,23 +12,53 @@
 
 window.onload = function(){
 	var gs = JSON.parse(localStorage.getItem('general_settings'));
-	if(gs.password.hash.length>0){
-		var input = window.prompt("Please enter your password.", "");
-		if(input != null && Crypto.SHA256(input) === gs.password.hash){
- 			restore_options();
- 			document.body.style.display = "block !important";
-		}else{
- 			document.body.innerHTML="Access denied: Password is incorrect.";
- 			document.body.style.display = "block !important";
- 			while(document.getElementsByTagName('script').length>0){
-	 			document.head.removeChild(document.getElementsByTagName('script')[0]);
- 			}
-		}
-	}else{
+	if (gs.password.hash.length > 0) {
+		var rClHandler = function(e){e.preventDefault();};
+		document.addEventListener('contextmenu', rClHandler);
+		$('#loginpage').fadeIn(2);
+		$('#pwfield').slideDown();
+		document.getElementById('validatePass').addEventListener('click', function(){
+			var enteredPw = $('#pwentry #input').val();
+			if (enteredPw != "" && enteredPw != null) {
+				if (Crypto.SHA256(enteredPw) == gs.password.hash) {
+					/*$('#pwfield #input').val(function(){
+						var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+						var text = "";
+
+					    for (var i = 0; i < enteredPw.length; i++)
+					        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+					    return text;
+					});*/
+					$('#loginpage').fadeOut(250);
+					KmUiBackend.restoreOptions();
+		 			document.getElementById('version').innerHTML = '0.1 (0708-005)';
+		 			document.body.style.display = "block !important";
+		 			document.removeEventListener('contextmenu', rClHandler);
+				} else {
+					$('#pwentry #input').val('');
+					document.getElementById('logintitle').innerHTML = 'Incorrect password.';
+					$('#logintitle').css('color', 'red');
+					setTimeout(function(){
+						document.getElementById('logintitle').innerHTML = 'Kaomojify is password protected.';
+						$('#logintitle').css('color', 'black');
+					}, 3000);
+				}
+			} else {
+				$('#pwentry #input').val('');
+				document.getElementById('logintitle').innerHTML = 'Password cannot be blank.';
+				$('#logintitle').css('color', 'red');
+				setTimeout(function(){
+					document.getElementById('logintitle').innerHTML = 'Kaomojify is password protected.';
+					$('#logintitle').css('color', 'black');
+				}, 5000);
+			}
+		});
+	} else {
+		document.getElementById('version').innerHTML = '0.1 (0708-005)';
 		KmUiBackend.restoreOptions();
  		document.body.style.display = "block !important";
 	}
-	document.getElementById('version').innerHTML = '0.1 (0708-005)';
 };
 
 // Global vars
@@ -220,6 +250,8 @@ var KmUiBackend = {
 		localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
 		localStorage.setItem('general_settings', JSON.stringify(general_settings));
 		
+		KmUiEvent.toast('Preferences saved.');
+
 		//update background.html settings
 		bg.prefs.content_filter = content_filter;
 		bg.prefs.profanity_filter = profanity_filter;
@@ -227,9 +259,10 @@ var KmUiBackend = {
 		bg.init();
 	},
 	setPassword: function(){
-		var pwPlaintext = $('#reasonfield #input').val();
+		var pwPlaintext = $('#pwfield #input').val();
 		password = Crypto.SHA256(pwPlaintext);
-		KmUiEvent.toast('Password successfully set.')
+		KmUiEvent.toast('Password successfully set.');
+		KmUiBackend.saveOptions();
 	}
 };
 
@@ -263,6 +296,6 @@ KmUiEvent.add(document, 'DOMContentLoaded', function(){
 	KmUiEvent.click('ls_status', function(){KmUiDom.toggle('#listfield');});
 	KmUiEvent.click('btn_reset', function(){KmUiBackend.resetOptions();});
 	KmUiEvent.click('setpass', function(){KmUiBackend.setPassword();});
-	KmUiEvent.click('btn_save', function(){KmUiEvent.toast('Preferences saved.');});
+	KmUiEvent.click('btn_save', function(){KmUiBackend.saveOptions();});
 	KmUiEvent.click('bitcoin', function(){KmUiEvent.toast('Coming soon!');});
 });
