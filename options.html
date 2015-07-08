@@ -12,112 +12,118 @@
 	<head>
 		<title>tinyFilter - Options</title>
 		<link rel="stylesheet" href="css/style.css" type="text/css"/>
+		<link rel="stylesheet" href="css/font-awesome.min.css" type="text/css"/>
 		<script type="text/javascript" src="js/crypto.min.js"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
 		<script type="text/javascript" src="js/options.js"></script>
 	</head>
 	<body>
-		<div class="top">
-			<span class="name">Kaomojify</span><span class="auth">by <a href="https://github.com/aureljared/kaomojify">Aurel Jared Dantis</a></span>
-		</div> 
-		<div class="box">
-			<div class="header">General Settings</div>
-			<div class="settings">
-				<div style="float:right;position:relative;top:-2px">
-					<button id="btn_pass" disabled="true">Set Password</button>
-				</div>
-				<label><input type="checkbox" id="pwd_status"/> Enable Password Protection</label>
+		<header>
+			<div>
+				<span class="name">Kaomojify Preferences</span>
 			</div>
-		</div>
-		<div class="box">
-			<div class="header">Content Filter</div>
-			<div class="settings">
-				<div style="float:right;position:relative;top:-2px">
-					<button id="btn_advSettings">Advanced Settings</button>
-				</div>
-				<input id="cf_status" type="checkbox"/>Enable Content Filter<br/><br/>
-				<div id="adv_settings" class="advanced">
-					<label><input type="checkbox" id="adv_stop"/> Stop all traffic</label><br/>
-					<label><input type="checkbox" id="adv_reason"/> Show reason for blockage</label><br/>
-					<div>
-						<label>
-							Warning message:<br/>
-							<input type="text" id="adv_warning" class="wide"/>
-						</label>
+			<div id="btn_save" class="fab ripple"><i class="fa fa-2x fa-floppy-o"></i></div>
+		</header>
+		<div class="content">
+			<div class="box">
+				<div class="header">General Settings</div>
+				<div class="settings">
+					<div style="float:right;position:relative;top:-2px">
+						<button id="btn_pass" disabled="true">Set Password</button>
 					</div>
-					<div>
-						<label>
-							Redirect blocked pages to:<br/>
-							<input type="text" id="adv_redirect" class="wide"/>
-						</label>
-					</div>
+					<label><input type="checkbox" id="pwd_status"/> Enable Password Protection</label>
 				</div>
-				<div class="listbox">
-					<div class="listbox_head" id="lst_bs">
-						<span class="link" style="float:right">&#9662;</span>
-						<b>Blocked Sites</b>
-					</div>
-					<div id="blocked_url"></div>
-				</div>
-				<div class="listbox">
-					<div class="listbox_head" id="lst_bk">
-						<span class="link" style="float:right">&#9662;</span>
-						<b>Blocked Keywords</b>
-					</div>
-					<div id="blocked_word"></div>
-				</div>
-				<div class="listbox">
-					<div class="listbox_head" id="lst_ts">
-						<span class="link" style="float:right">&#9662;</span>
-						<b>Trusted Sites</b>
-					</div>
-					<div id="trusted_url"></div>
-				</div>
-				<br/>
-				<form>
-					<input type="text" id="keyword_cf" maxlength="20"/>
-					<input type="button" id="add_cf" value="Add"/>
-					<label><input id="bu" type="radio" name="group1" value="0"/> Block Site</label>
-					<label><input id="bw" type="radio" name="group1" value="1"/> Block Keyword</label>
-					<label><input id="au" type="radio" name="group1" value="2"/> Trust Site</label>
-				</form>
 			</div>
-		</div>
-		<div class="box">
-			<div class="header">Profanity Filter</div>
-			<div class="settings">
-				<input id="pf_status" type="checkbox"/>Enable Profanity Filter<br/><br/>
-				<div class="listbox">
-					<div class="listbox_head" id="lst_pf">
-						<span class="link" style="float:right">&#9662;</span>
-						<b>Profanity Filter</b>
+			<div class="box">
+				<div class="header">Content Filter</div>
+				<div class="settings">
+					<div style="float:right;position:relative;top:-2px">
+						<button id="btn_advSettings">Advanced Settings</button>
 					</div>
-					<div id="profanity_word"></div>
+					<input id="cf_status" type="checkbox"/>Enable Content Filter<br/><br/>
+					<div id="adv_settings" class="advanced">
+						<label><input type="checkbox" id="adv_stop"/> Stop all traffic</label><br/>
+						<label><input type="checkbox" id="adv_reason"/> Show reason for blockage</label><br/>
+						<div>
+							<label>
+								Warning message:<br/>
+								<input type="text" id="adv_warning" class="wide"/>
+							</label>
+						</div>
+						<div>
+							<label>
+								Redirect blocked pages to:<br/>
+								<input type="text" id="adv_redirect" class="wide"/>
+							</label>
+						</div>
+					</div>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_bs">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Blocked Sites</b>
+						</div>
+						<div id="blocked_url"></div>
+					</div>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_bk">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Blocked Keywords</b>
+						</div>
+						<div id="blocked_word"></div>
+					</div>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_ts">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Trusted Sites</b>
+						</div>
+						<div id="trusted_url"></div>
+					</div>
+					<br/>
+					<form>
+						<input type="text" id="keyword_cf" maxlength="120" size="20"/>
+						<input type="button" id="add_cf" value="Add"/>
+						<label><input id="bu" type="radio" name="group1" value="0"/> Block Site</label>
+						<label><input id="bw" type="radio" name="group1" value="1"/> Block Keyword</label>
+						<label><input id="au" type="radio" name="group1" value="2"/> Trust Site</label>
+					</form>
 				</div>
-				<br/>
-				<form>
-					<input type="text" id="keyword_pf" maxlength="20"/>
-					<input type="button" id="add_pf" value="Add"/>
-				</form>
 			</div>
-		</div>
-		<div class="box">
-			<div class="header">List Subscription</div>
-			<div class="settings">
-				<div class="link" style="float:right;position:relative;top:-2px">
-					<button id="btn_generate">Generate Your List</button>
+			<div class="box">
+				<div class="header">Profanity Filter</div>
+				<div class="settings">
+					<input id="pf_status" type="checkbox"/>Enable Profanity Filter<br/><br/>
+					<div class="listbox">
+						<div class="listbox_head" id="lst_pf">
+							<span class="link" style="float:right">&#9662;</span>
+							<b>Profanity Filter</b>
+						</div>
+						<div id="profanity_word"></div>
+					</div>
+					<br/>
+					<form>
+						<input type="text" id="keyword_pf" maxlength="120" size="20"/>
+						<input type="button" id="add_pf" value="Add"/>
+					</form>
 				</div>
-				<label><input type="checkbox" id="ls_status"/> Enable List Subscription</label>
-				<br/><br/>
-				<input type="text" id="ls_url" class="wide"/>
 			</div>
-		</div>
-		<div id="action_buttons">
-			<div style="float:right">
-				<button id="btn_reset">Reset</button>
-				<button id="btn_save">Save</button>
+			<div class="box">
+				<div class="header">List Subscription</div>
+				<div class="settings">
+					<div class="link" style="float:right;position:relative;top:-2px">
+						<button id="btn_generate">Generate Your List</button>
+					</div>
+					<label><input type="checkbox" id="ls_status"/> Enable List Subscription</label>
+					<br/><br/>
+					<input type="text" id="ls_url" class="wide"/>
+				</div>
 			</div>
-			<div id="status" style="visibility:hidden">
-				Options Saved
+			<div id="action_buttons">
+				<div style="float:right">
+					<button id="btn_reset">Reset</button>
+				</div>
+				<div id="status" style="visibility:hidden">
+					Options Saved
+				</div>
 			</div>
 		</div>
 	</body>

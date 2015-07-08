@@ -1,26 +1,56 @@
 html { overflow-y: scroll; }
-
 body {
     display: block !important;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-size: 12px;
-    color: #0d0d0d;
+    color: #000;
     width: 400px;
     margin: 0 auto;
-    padding: 20px 10px;
 }
+.content { padding: 70px 10px 10px 10px; }
 
-a, a:hover, a:focus,
-button, button:hover, button:focus {
+*, *:hover, *:focus {
 	-webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
-    text-decoration: none;
 }
+a, a:hover, a:focus { text-decoration: none; }
 
+header {
+	width: 400px;
+	height: 68px;
+	background-color: #512DA8;
+	font-weight: 300;
+	box-shadow: 0px 0px 3px black;
+	position: fixed;
+	z-index: 5;
+}
+header > div {
+	position: absolute;
+	top: 23px;
+	padding-left: 20px;
+	color: #fff;
+}
+.fab {
+	border-radius: 150px;
+	width: 50px;
+	height: 50px;
+	background-color: #FF4081;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	top: 42px;
+	right: 15px;
+	box-shadow: 0px 0px 8px #383737;
+	cursor: pointer;
+}
+.fab:hover { box-shadow: 1px 3px 13px #383737; }
+.fab > i {
+    margin-top: 40%;
+    margin-left: -5px;
+}
 .name, .auth { padding-right: 5px; }
 .name { font-size: 20px; }
 .auth { font-size: 13px; }
-.header { padding-bottom: 20px; }
+.auth a { color: #fff; }
 
 .box {
     border: 0;
@@ -35,15 +65,11 @@ button, button:hover, button:focus {
 }
 
 .header {
-    font-weight: 700;
-    text-transform: uppercase;
+    font-weight: 500;
     font-size: 13px;
-    color: #333;
+    color: #b6b6b6;
     padding: 2px 8px;
-    border-top: 1px solid #B5C6DE;
-    border-bottom: 1px solid #B5C6DE;
     margin: 0 -5px;
-    background-color: #ebeff9;
 }
 
 .settings {

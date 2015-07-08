@@ -18,6 +18,7 @@ chrome.tabs.getSelected(null,function(tab){
 });
 }
 
+var crxopts = 'chrome://extensions/?options=' + chrome.runtime.id;
 window.addEventListener('DOMContentLoaded', function(e){
   document.getElementById("btn_ppbs").addEventListener("click", function(){
     actionSite(0);
@@ -26,7 +27,7 @@ window.addEventListener('DOMContentLoaded', function(e){
     actionSite(1);
   });
   document.getElementById("btn_ppopt").addEventListener("click", function(){
-    chrome.tabs.create({url:"options.html"});
+    chrome.tabs.create({url:crxopts});
     window.close();
  });
 });
