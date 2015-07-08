@@ -9,7 +9,7 @@ It replaces all swear/curse/bad words in its list (`default.txt`) with a random 
 
 Kaomojify's options page uses dependencies from the Polymer Project, which are available from Bower.
 
-Should you decide to add any scripts or HTML imports to the options page, add your desired entries to `.imports` and build the options page through `./build.sh index.html options.html`.
+Should you decide to add any scripts or HTML imports from Bower to the options page, add your desired entries to `.imports` and build the options page through `./build.sh index.html options.html`. All scripts that don't come from Bower should be declared directly in `index.html`.
 
 ## Progress
 

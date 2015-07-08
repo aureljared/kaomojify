@@ -10,7 +10,7 @@
 
 // TODO: temporary access
 
-var tinyFilter = {
+var kaomojify = {
 	 doc: document,
    detection: false,
    temp: [],
@@ -33,8 +33,8 @@ var tinyFilter = {
     if(!this.loaded){
 			chrome.extension.sendRequest({name: "getPreferences"},
  				function(response){
-  				tinyFilter.init(response);
-					tinyFilter.start();
+  				kaomojify.init(response);
+					kaomojify.start();
  				});
         return;
 		}
@@ -73,6 +73,6 @@ var tinyFilter = {
 
 chrome.extension.sendRequest({name: "getPreferences"},
 function(response){
-	tinyFilter.init(response);
-	tinyFilter.start();
+	kaomojify.init(response);
+	kaomojify.start();
 });

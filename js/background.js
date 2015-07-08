@@ -8,7 +8,7 @@
     alse be found on the project page under the filename 'LICENSE.txt'.
 */
 
-var tinyFilter_bg = {
+var kaomojify_bg = {
 	prefs : {
 		content_filter : (function(){
 			return (localStorage.getItem("content_filter")) ? JSON.parse(localStorage.getItem("content_filter")) : [];
@@ -78,8 +78,8 @@ var tinyFilter_bg = {
 	},
 
 	generateSubscription : function(){
-		var dataURI = "data:text/plain;charset=utf-8,%23 TINYFILTER EXTENSION%0A%23 LIST SUBSCRIPTION%0A%23 DATE: " +
-			new Date() + "%0A%0A[tinyFilter]" +
+		var dataURI = "data:text/plain;charset=utf-8,%23 KAOMOJIFY EXTENSION%0A%23 LIST SUBSCRIPTION%0A%23 DATE: " +
+			new Date() + "%0A%0A[kaomojify]" +
 			"%0A%0A%23 Block pages based on following criteria" +
 			"%0ACONTENT_FILTER.BLOCK.SITES=" + this.prefs.content_filter.block.sites +
 			"%0A%0ACONTENT_FILTER.BLOCK.WORDS=" + this.prefs.content_filter.block.words +
@@ -98,7 +98,7 @@ var tinyFilter_bg = {
 		var file = xhr.responseText.split(/[\n]+/);
 		var legit = false;
 		var re_comment = /^(#|\\s+#)/;		//comment preceded by #
-		var re_legit = /^\[tinyFilter\]/i;
+		var re_legit = /^\[kaomojify\]/i;
 		var re_cfg_name = /.*\=/;
 		var line;
 
@@ -231,7 +231,7 @@ var tinyFilter_bg = {
 (function(){
 	// Update Subscription
 	
-	var tf_subs = tinyFilter_bg.prefs.subscriptions;
+	var tf_subs = kaomojify_bg.prefs.subscriptions;
 	if(!tf_subs){
 		return;
 	}
@@ -240,26 +240,26 @@ var tinyFilter_bg = {
 	var time_since_last_update = new Date().getTime() - tf_subs.last_update;
 	
 	if(tf_subs.enabled && time_since_last_update > three_days){
-		var response = tinyFilter_bg.loadSubscription(tinyFilter_bg.prefs.subscriptions.url);
+		var response = kaomojify_bg.loadSubscription(kaomojify_bg.prefs.subscriptions.url);
 		if(response){
-			tinyFilter_bg.prefs.subscriptions.content_filter.block.sites = (response.content_filter.block.sites) ? response.content_filter.block.sites : [];
-			tinyFilter_bg.prefs.subscriptions.content_filter.block.words = (response.content_filter.block.words) ? response.content_filter.block.words : [];
-			tinyFilter_bg.prefs.subscriptions.content_filter.trust.sites = (response.content_filter.trust.sites) ? response.content_filter.trust.sites : [];
-			tinyFilter_bg.prefs.subscriptions.profanity_filter.words = (response.profanity_filter.words) ? response.profanity_filter.words : [];
-			tinyFilter_bg.prefs.subscriptions.last_update = new Date().getTime();
-			localStorage.setItem('subscriptions', JSON.stringify(tinyFilter_bg.prefs.subscriptions));
+			kaomojify_bg.prefs.subscriptions.content_filter.block.sites = (response.content_filter.block.sites) ? response.content_filter.block.sites : [];
+			kaomojify_bg.prefs.subscriptions.content_filter.block.words = (response.content_filter.block.words) ? response.content_filter.block.words : [];
+			kaomojify_bg.prefs.subscriptions.content_filter.trust.sites = (response.content_filter.trust.sites) ? response.content_filter.trust.sites : [];
+			kaomojify_bg.prefs.subscriptions.profanity_filter.words = (response.profanity_filter.words) ? response.profanity_filter.words : [];
+			kaomojify_bg.prefs.subscriptions.last_update = new Date().getTime();
+			localStorage.setItem('subscriptions', JSON.stringify(kaomojify_bg.prefs.subscriptions));
 			//alert("subscription list updated");
 		}
 	}
 })();
 
-tinyFilter_bg.init();
+kaomojify_bg.init();
 
 chrome.extension.onRequest.addListener(
 	function(request, sender, sendResponse){
 		switch (request.name){
 			case "getPreferences":
-				sendResponse(tinyFilter_bg.prefs);
+				sendResponse(kaomojify_bg.prefs);
 				break;
 
 			case "redirectPage":
@@ -273,7 +273,7 @@ chrome.extension.onRequest.addListener(
 );
 
 function loadURI(tab){
-	var tabUrl = tinyFilter_bg.prefs.content_filter.advanced.redirect;
+	var tabUrl = kaomojify_bg.prefs.content_filter.advanced.redirect;
 	chrome.tabs.update(tab.id, {url: tabUrl});
 }
 var popup = {
@@ -304,7 +304,7 @@ var popup = {
 					return 0;
 				}
 			}
-			var content_filter=tinyFilter_bg.prefs.content_filter;
+			var content_filter=kaomojify_bg.prefs.content_filter;
 			if(action === 0){
 				content_filter.block.sites[content_filter.block.sites.length]=domain;
 			}else if(action === 1){

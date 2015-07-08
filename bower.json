@@ -1,12 +1,17 @@
 {
-	"name": "kaomojify",
-	"version": "0.1",
-	"dependencies": {
-		"polymer": "Polymer/polymer#^1.0.0",
-		"jquery": "jquery#1.11.1",
-		"iron-icons": "PolymerElements/iron-icons",
-		"paper-fab": "PolymerElements/paper-fab",
-		"paper-button": "PolymerElements/paper-button",
-		"paper-ripple": "PolymerElements/paper-ripple"
-	}
+  "name": "kaomojify",
+  "version": "0.1",
+  "dependencies": {
+    "iron-icons": "PolymerElements/iron-icons",
+    "iron-input": "PolymerElements/iron-input",
+    "jquery": "jquery#1.11.1",
+    "paper-fab": "PolymerElements/paper-fab",
+    "paper-button": "PolymerElements/paper-button",
+    "paper-input": "PolymerElements/paper-input",
+    "paper-ripple": "PolymerElements/paper-ripple",
+    "paper-toast": "PolymerElements/paper-toast",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button",
+    "paper-checkbox": "PolymerElements/paper-checkbox",
+    "polymer": "Polymer/polymer#^1.0.0"
+  }
 }

@@ -7,13 +7,13 @@ body {
     width: 400px;
     margin: 0 auto;
 }
-.content { padding: 70px 10px 10px 10px; }
+.content { padding: 95px 10px 10px 10px; }
 
-*, *:hover, *:focus {
+a, a:hover, a:focus {
 	-webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
-a, a:hover, a:focus { text-decoration: none; }
 
 header {
 	width: 400px;
@@ -31,118 +31,40 @@ header > div {
 	color: #fff;
 }
 .fab {
+	position: fixed;
 	width: 50px;
 	height: 50px;
-	top: 42px;
-	right: 15px;
+	bottom: 25px;
+	right: 25px;
 }
+.fab > paper-fab > paper-material { padding: 0; }
 
 .name, .auth { padding-right: 5px; }
 .name { font-size: 20px; }
 .auth { font-size: 13px; }
 .auth a { color: #fff; }
 
-.box {
-    border: 0;
-    margin: 10px auto;
-    padding: 0 5px 5px;
-    background-color: #fff;
-}
-
 #action_buttons {
     width: 100%;
     margin: 11px auto 50px;
 }
 
-.header {
-    font-weight: 500;
-    font-size: 13px;
-    color: #b6b6b6;
-    padding: 2px 8px;
-    margin: 0 -5px;
+.card {
+	margin-bottom: 8px;
+	margin-left: -10px;
+	width: 400px;
 }
-
-.settings {
-    margin: 10px 0;
+.card-content { padding: 0px 20px; }
+.card-title {
+	padding-bottom: 20px;
+    font-weight: 400;
+    color: #909090;
 }
+.card-section { padding-bottom: 40px; }
+.style-scope .paper-input, label { font-size: 14px !important; }
+paper-toggle-button { margin-bottom: -2px; float: right; }
 
-input[type='checkbox'] {
-    position: relative;
-    left: -2px;
-    top: 2px;
-}
-
-input[type='text'] {
-    border: 1px solid #ccc;
-}
-
-input.wide {
-    width: 100%;
-}
-
-p {
-    margin: 3px 2px;
-}
-
-span.link {
-    color: #888;
-    font-size: 11px;
-    margin-left: 5px;
-}
-
-span.link:hover {
-    color: blue;
-    cursor: hand;
-}
-
-.advanced {
-    margin-bottom: 10px !important;
-}
-
-.advanced div {
-    margin: 8px 4px
-}
-
-.listbox,
-.advanced {
-    margin: 2px 0;
-    padding: 2px 2px;
-    background-color: #f5f5f5;
-    border: 1px solid #dfdfdf;
-    border-bottom-left-radius: 5px 5px;
-    border-bottom-right-radius: 5px 5px;
-    border-top-left-radius: 5px 5px;
-    border-top-right-radius: 5px 5px;
-}
-
-.listbox div:last-child {
-    border-top: 1px solid #dfdfdf;
-    font-size: 11px !important;
-}
-
-.listbox:hover {
-    background-color: #ebeff9;
-    border: 1px solid #B5C6DE
-}
-
-.listbox:hover div:last-child {
-    border-color: #ddd
-}
-
-.listbox div:last-child,
-.advanced {
-    display: none;
-}
-
-.listbox_head:hover {
-    cursor: hand;
-}
-
-.listbox_head:hover > span {
-    color: blue;
-}
-
-h1 {
-    font-size: 20px;
-    margin: 0;
+.resetbutton {
+	position: absolute;
+	bottom: 30px;
 }

@@ -1,8 +1,17 @@
+# Bower imports
+poly=(
+	paper-ripple/paper-ripple.html
+	paper-fab/paper-fab.html
+	paper-button/paper-button.html
+	paper-input/paper-input.html
+	paper-toast/paper-toast.html
+	paper-toggle-button/paper-toggle-button.html
+	iron-icons/iron-icons.html
+)
+# External scripts
 js=(
 	js/crypto.min.js
 	js/options.js
-)
-poly=(
-	paper-fab/paper-fab.html
-	paper-button/paper-button.html
+	js/material.options.js
+	bower/jquery/dist/jquery.min.js
 )

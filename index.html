@@ -10,10 +10,8 @@
 -->
 <html>
 	<head>
-		<title>tinyFilter - Options</title>
+		<title>Kaomojify Preferences</title>
 		<link rel="stylesheet" href="css/style.css" type="text/css"/>
-		<link rel="stylesheet" href="css/font-awesome.min.css" type="text/css"/>
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic" type="text/css"/>
 		<!-- build.sh - imports -->
 	</head>
 	<body>
@@ -27,10 +25,9 @@
 			<div class="box">
 				<div class="header">General Settings</div>
 				<div class="settings">
-					<div style="float:right;position:relative;top:-2px">
-						<button id="btn_pass" disabled="true">Set Password</button>
-					</div>
-					<label><input type="checkbox" id="pwd_status"/> Enable Password Protection</label>
+					<label>Enable password protection</label>
+					<paper-toggle-button id="pwd_status"></paper-toggle-button>
+					<paper-button raised id="btn_pass">confirm</paper-button>
 				</div>
 			</div>
 			<div class="box">
@@ -41,8 +38,8 @@
 					</div>
 					<input id="cf_status" type="checkbox"/>Enable Content Filter<br/><br/>
 					<div id="adv_settings" class="advanced">
-						<label><input type="checkbox" id="adv_stop"/> Stop all traffic</label><br/>
-						<label><input type="checkbox" id="adv_reason"/> Show reason for blockage</label><br/>
+						<label><paper-toggle-button id="adv_stop"/> Stop all traffic</paper-toggle-button></label><br/>
+						<label><paper-toggle-button id="adv_reason"/> Show reason for blockage</paper-toggle-button></label><br/>
 						<div>
 							<label>
 								Warning message:<br/>
@@ -111,7 +108,7 @@
 					<div class="link" style="float:right;position:relative;top:-2px">
 						<button id="btn_generate">Generate Your List</button>
 					</div>
-					<label><input type="checkbox" id="ls_status"/> Enable List Subscription</label>
+					<label><paper-toggle-button id="ls_status"/></paper-toggle-button> Enable List Subscription</label>
 					<br/><br/>
 					<input type="text" id="ls_url" class="wide"/>
 				</div>

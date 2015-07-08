@@ -5871,449 +5871,6 @@ this._removeChildren();
 }
 });
 ;
-
-  (function() {
-
-    // monostate data
-    var metaDatas = {};
-    var metaArrays = {};
-
-    Polymer.IronMeta = Polymer({
-
-      is: 'iron-meta',
-
-      properties: {
-
-        /**
-         * The type of meta-data.  All meta-data of the same type is stored
-         * together.
-         */
-        type: {
-          type: String,
-          value: 'default',
-          observer: '_typeChanged'
-        },
-
-        /**
-         * The key used to store `value` under the `type` namespace.
-         */
-        key: {
-          type: String,
-          observer: '_keyChanged'
-        },
-
-        /**
-         * The meta-data to store or retrieve.
-         */
-        value: {
-          type: Object,
-          notify: true,
-          observer: '_valueChanged'
-        },
-
-        /**
-         * If true, `value` is set to the iron-meta instance itself.
-         */
-         self: {
-          type: Boolean,
-          observer: '_selfChanged'
-        },
-
-        /**
-         * Array of all meta-data values for the given type.
-         */
-        list: {
-          type: Array,
-          notify: true
-        }
-
-      },
-
-      /**
-       * Only runs if someone invokes the factory/constructor directly
-       * e.g. `new Polymer.IronMeta()`
-       */
-      factoryImpl: function(config) {
-        if (config) {
-          for (var n in config) {
-            switch(n) {
-              case 'type':
-              case 'key':
-              case 'value':
-                this[n] = config[n];
-                break;
-            }
-          }
-        }
-      },
-
-      created: function() {
-        // TODO(sjmiles): good for debugging?
-        this._metaDatas = metaDatas;
-        this._metaArrays = metaArrays;
-      },
-
-      _keyChanged: function(key, old) {
-        this._resetRegistration(old);
-      },
-
-      _valueChanged: function(value) {
-        this._resetRegistration(this.key);
-      },
-
-      _selfChanged: function(self) {
-        if (self) {
-          this.value = this;
-        }
-      },
-
-      _typeChanged: function(type) {
-        this._unregisterKey(this.key);
-        if (!metaDatas[type]) {
-          metaDatas[type] = {};
-        }
-        this._metaData = metaDatas[type];
-        if (!metaArrays[type]) {
-          metaArrays[type] = [];
-        }
-        this.list = metaArrays[type];
-        this._registerKeyValue(this.key, this.value);
-      },
-
-      /**
-       * Retrieves meta data value by key.
-       *
-       * @method byKey
-       * @param {string} key The key of the meta-data to be returned.
-       * @return {*}
-       */
-      byKey: function(key) {
-        return this._metaData && this._metaData[key];
-      },
-
-      _resetRegistration: function(oldKey) {
-        this._unregisterKey(oldKey);
-        this._registerKeyValue(this.key, this.value);
-      },
-
-      _unregisterKey: function(key) {
-        this._unregister(key, this._metaData, this.list);
-      },
-
-      _registerKeyValue: function(key, value) {
-        this._register(key, value, this._metaData, this.list);
-      },
-
-      _register: function(key, value, data, list) {
-        if (key && data && value !== undefined) {
-          data[key] = value;
-          list.push(value);
-        }
-      },
-
-      _unregister: function(key, data, list) {
-        if (key && data) {
-          if (key in data) {
-            var value = data[key];
-            delete data[key];
-            this.arrayDelete(list, value);
-          }
-        }
-      }
-
-    });
-
-    /**
-    `iron-meta-query` can be used to access infomation stored in `iron-meta`.
-
-    Examples:
-
-    If I create an instance like this:
-
-        <iron-meta key="info" value="foo/bar"></iron-meta>
-
-    Note that value="foo/bar" is the metadata I've defined. I could define more
-    attributes or use child nodes to define additional metadata.
-
-    Now I can access that element (and it's metadata) from any `iron-meta-query` instance:
-
-         var value = new Polymer.IronMetaQuery({key: 'info'}).value;
-
-    @group Polymer Iron Elements
-    @element iron-meta-query
-    */
-    Polymer.IronMetaQuery = Polymer({
-
-      is: 'iron-meta-query',
-
-      properties: {
-
-        /**
-         * The type of meta-data.  All meta-data of the same type is stored
-         * together.
-         */
-        type: {
-          type: String,
-          value: 'default',
-          observer: '_typeChanged'
-        },
-
-        /**
-         * Specifies a key to use for retrieving `value` from the `type`
-         * namespace.
-         */
-        key: {
-          type: String,
-          observer: '_keyChanged'
-        },
-
-        /**
-         * The meta-data to store or retrieve.
-         */
-        value: {
-          type: Object,
-          notify: true,
-          readOnly: true
-        },
-
-        /**
-         * Array of all meta-data values for the given type.
-         */
-        list: {
-          type: Array,
-          notify: true
-        }
-
-      },
-
-      /**
-       * Actually a factory method, not a true constructor. Only runs if
-       * someone invokes it directly (via `new Polymer.IronMeta()`);
-       */
-      factoryImpl: function(config) {
-        if (config) {
-          for (var n in config) {
-            switch(n) {
-              case 'type':
-              case 'key':
-                this[n] = config[n];
-                break;
-            }
-          }
-        }
-      },
-
-      created: function() {
-        // TODO(sjmiles): good for debugging?
-        this._metaDatas = metaDatas;
-        this._metaArrays = metaArrays;
-      },
-
-      _keyChanged: function(key) {
-        this._setValue(this._metaData && this._metaData[key]);
-      },
-
-      _typeChanged: function(type) {
-        this._metaData = metaDatas[type];
-        this.list = metaArrays[type];
-        if (this.key) {
-          this._keyChanged(this.key);
-        }
-      },
-
-      /**
-       * Retrieves meta data value by key.
-       * @param {string} key The key of the meta-data to be returned.
-       * @return {*}
-       */
-      byKey: function(key) {
-        return this._metaData && this._metaData[key];
-      }
-
-    });
-
-  })();
-
-;
-  /**
-   * The `iron-iconset-svg` element allows users to define their own icon sets
-   * that contain svg icons. The svg icon elements should be children of the
-   * `iron-iconset-svg` element. Multiple icons should be given distinct id's.
-   *
-   * Using svg elements to create icons has a few advantages over traditional
-   * bitmap graphics like jpg or png. Icons that use svg are vector based so they
-   * are resolution independent and should look good on any device. They are
-   * stylable via css. Icons can be themed, colorized, and even animated.
-   *
-   * Example:
-   *
-   *     <iron-iconset-svg name="my-svg-icons" size="24">
-   *       <svg>
-   *         <defs>
-   *           <g id="shape">
-   *             <rect x="50" y="50" width="50" height="50" />
-   *             <circle cx="50" cy="50" r="50" />
-   *           </g>
-   *         </defs>
-   *       </svg>
-   *     </iron-iconset-svg>
-   *
-   * This will automatically register the icon set "my-svg-icons" to the iconset
-   * database.  To use these icons from within another element, make a
-   * `iron-iconset` element and call the `byId` method
-   * to retrieve a given iconset. To apply a particular icon inside an
-   * element use the `applyIcon` method. For example:
-   *
-   *     iconset.applyIcon(iconNode, 'car');
-   *
-   * @element iron-iconset-svg
-   * @demo demo/index.html
-   */
-  Polymer({
-
-    is: 'iron-iconset-svg',
-
-    properties: {
-
-      /**
-       * The name of the iconset.
-       *
-       * @attribute name
-       * @type string
-       */
-      name: {
-        type: String,
-        observer: '_nameChanged'
-      },
-
-      /**
-       * The size of an individual icon. Note that icons must be square.
-       *
-       * @attribute iconSize
-       * @type number
-       * @default 24
-       */
-      size: {
-        type: Number,
-        value: 24
-      }
-
-    },
-
-    /**
-     * Construct an array of all icon names in this iconset.
-     *
-     * @return {!Array} Array of icon names.
-     */
-    getIconNames: function() {
-      this._icons = this._createIconMap();
-      return Object.keys(this._icons).map(function(n) {
-        return this.name + ':' + n;
-      }, this);
-    },
-
-    /**
-     * Applies an icon to the given element.
-     *
-     * An svg icon is prepended to the element's shadowRoot if it exists,
-     * otherwise to the element itself.
-     *
-     * @method applyIcon
-     * @param {Element} element Element to which the icon is applied.
-     * @param {string} iconName Name of the icon to apply.
-     * @return {Element} The svg element which renders the icon.
-     */
-    applyIcon: function(element, iconName) {
-      // insert svg element into shadow root, if it exists
-      element = element.root || element;
-      // Remove old svg element
-      this.removeIcon(element);
-      // install new svg element
-      var svg = this._cloneIcon(iconName);
-      if (svg) {
-        var pde = Polymer.dom(element);
-        pde.insertBefore(svg, pde.childNodes[0]);
-        return element._svgIcon = svg;
-      }
-      return null;
-    },
-
-    /**
-     * Remove an icon from the given element by undoing the changes effected
-     * by `applyIcon`.
-     *
-     * @param {Element} element The element from which the icon is removed.
-     */
-    removeIcon: function(element) {
-      // Remove old svg element
-      if (element._svgIcon) {
-        Polymer.dom(element).removeChild(element._svgIcon);
-        element._svgIcon = null;
-      }
-    },
-
-    /**
-     *
-     * When name is changed, register iconset metadata
-     *
-     */
-    _nameChanged: function() {
-      new Polymer.IronMeta({type: 'iconset', key: this.name, value: this});
-    },
-
-    /**
-     * Create a map of child SVG elements by id.
-     *
-     * @return {!Object} Map of id's to SVG elements.
-     */
-    _createIconMap: function() {
-      // Objects chained to Object.prototype (`{}`) have members. Specifically,
-      // on FF there is a `watch` method that confuses the icon map, so we
-      // need to use a null-based object here.
-      var icons = Object.create(null);
-      Polymer.dom(this).querySelectorAll('[id]')
-        .forEach(function(icon) {
-          icons[icon.id] = icon;
-        });
-      return icons;
-    },
-
-    /**
-     * Produce installable clone of the SVG element matching `id` in this
-     * iconset, or `undefined` if there is no matching element.
-     *
-     * @return {Element} Returns an installable clone of the SVG element
-     * matching `id`.
-     */
-    _cloneIcon: function(id) {
-      // create the icon map on-demand, since the iconset itself has no discrete
-      // signal to know when it's children are fully parsed
-      this._icons = this._icons || this._createIconMap();
-      return this._prepareSvgClone(this._icons[id], this.size);
-    },
-
-    /**
-     * @param {Element} sourceSvg
-     * @param {number} size
-     * @return {Element}
-     */
-    _prepareSvgClone: function(sourceSvg, size) {
-      if (sourceSvg) {
-        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', ['0', '0', size, size].join(' '));
-        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-        // TODO(dfreedm): `pointer-events: none` works around https://crbug.com/370136
-        // TODO(sjmiles): inline style may not be ideal, but avoids requiring a shadow-root
-        svg.style.cssText = 'pointer-events: none; display: block; width: 100%; height: 100%;';
-        svg.appendChild(sourceSvg.cloneNode(true)).removeAttribute('id');
-        return svg;
-      }
-      return null;
-    }
-
-  });
-
-;
   (function() {
     'use strict';
 
@@ -6724,6 +6281,270 @@ this._removeChildren();
 
 ;
 
+  (function() {
+
+    // monostate data
+    var metaDatas = {};
+    var metaArrays = {};
+
+    Polymer.IronMeta = Polymer({
+
+      is: 'iron-meta',
+
+      properties: {
+
+        /**
+         * The type of meta-data.  All meta-data of the same type is stored
+         * together.
+         */
+        type: {
+          type: String,
+          value: 'default',
+          observer: '_typeChanged'
+        },
+
+        /**
+         * The key used to store `value` under the `type` namespace.
+         */
+        key: {
+          type: String,
+          observer: '_keyChanged'
+        },
+
+        /**
+         * The meta-data to store or retrieve.
+         */
+        value: {
+          type: Object,
+          notify: true,
+          observer: '_valueChanged'
+        },
+
+        /**
+         * If true, `value` is set to the iron-meta instance itself.
+         */
+         self: {
+          type: Boolean,
+          observer: '_selfChanged'
+        },
+
+        /**
+         * Array of all meta-data values for the given type.
+         */
+        list: {
+          type: Array,
+          notify: true
+        }
+
+      },
+
+      /**
+       * Only runs if someone invokes the factory/constructor directly
+       * e.g. `new Polymer.IronMeta()`
+       */
+      factoryImpl: function(config) {
+        if (config) {
+          for (var n in config) {
+            switch(n) {
+              case 'type':
+              case 'key':
+              case 'value':
+                this[n] = config[n];
+                break;
+            }
+          }
+        }
+      },
+
+      created: function() {
+        // TODO(sjmiles): good for debugging?
+        this._metaDatas = metaDatas;
+        this._metaArrays = metaArrays;
+      },
+
+      _keyChanged: function(key, old) {
+        this._resetRegistration(old);
+      },
+
+      _valueChanged: function(value) {
+        this._resetRegistration(this.key);
+      },
+
+      _selfChanged: function(self) {
+        if (self) {
+          this.value = this;
+        }
+      },
+
+      _typeChanged: function(type) {
+        this._unregisterKey(this.key);
+        if (!metaDatas[type]) {
+          metaDatas[type] = {};
+        }
+        this._metaData = metaDatas[type];
+        if (!metaArrays[type]) {
+          metaArrays[type] = [];
+        }
+        this.list = metaArrays[type];
+        this._registerKeyValue(this.key, this.value);
+      },
+
+      /**
+       * Retrieves meta data value by key.
+       *
+       * @method byKey
+       * @param {string} key The key of the meta-data to be returned.
+       * @return {*}
+       */
+      byKey: function(key) {
+        return this._metaData && this._metaData[key];
+      },
+
+      _resetRegistration: function(oldKey) {
+        this._unregisterKey(oldKey);
+        this._registerKeyValue(this.key, this.value);
+      },
+
+      _unregisterKey: function(key) {
+        this._unregister(key, this._metaData, this.list);
+      },
+
+      _registerKeyValue: function(key, value) {
+        this._register(key, value, this._metaData, this.list);
+      },
+
+      _register: function(key, value, data, list) {
+        if (key && data && value !== undefined) {
+          data[key] = value;
+          list.push(value);
+        }
+      },
+
+      _unregister: function(key, data, list) {
+        if (key && data) {
+          if (key in data) {
+            var value = data[key];
+            delete data[key];
+            this.arrayDelete(list, value);
+          }
+        }
+      }
+
+    });
+
+    /**
+    `iron-meta-query` can be used to access infomation stored in `iron-meta`.
+
+    Examples:
+
+    If I create an instance like this:
+
+        <iron-meta key="info" value="foo/bar"></iron-meta>
+
+    Note that value="foo/bar" is the metadata I've defined. I could define more
+    attributes or use child nodes to define additional metadata.
+
+    Now I can access that element (and it's metadata) from any `iron-meta-query` instance:
+
+         var value = new Polymer.IronMetaQuery({key: 'info'}).value;
+
+    @group Polymer Iron Elements
+    @element iron-meta-query
+    */
+    Polymer.IronMetaQuery = Polymer({
+
+      is: 'iron-meta-query',
+
+      properties: {
+
+        /**
+         * The type of meta-data.  All meta-data of the same type is stored
+         * together.
+         */
+        type: {
+          type: String,
+          value: 'default',
+          observer: '_typeChanged'
+        },
+
+        /**
+         * Specifies a key to use for retrieving `value` from the `type`
+         * namespace.
+         */
+        key: {
+          type: String,
+          observer: '_keyChanged'
+        },
+
+        /**
+         * The meta-data to store or retrieve.
+         */
+        value: {
+          type: Object,
+          notify: true,
+          readOnly: true
+        },
+
+        /**
+         * Array of all meta-data values for the given type.
+         */
+        list: {
+          type: Array,
+          notify: true
+        }
+
+      },
+
+      /**
+       * Actually a factory method, not a true constructor. Only runs if
+       * someone invokes it directly (via `new Polymer.IronMeta()`);
+       */
+      factoryImpl: function(config) {
+        if (config) {
+          for (var n in config) {
+            switch(n) {
+              case 'type':
+              case 'key':
+                this[n] = config[n];
+                break;
+            }
+          }
+        }
+      },
+
+      created: function() {
+        // TODO(sjmiles): good for debugging?
+        this._metaDatas = metaDatas;
+        this._metaArrays = metaArrays;
+      },
+
+      _keyChanged: function(key) {
+        this._setValue(this._metaData && this._metaData[key]);
+      },
+
+      _typeChanged: function(type) {
+        this._metaData = metaDatas[type];
+        this.list = metaArrays[type];
+        if (this.key) {
+          this._keyChanged(this.key);
+        }
+      },
+
+      /**
+       * Retrieves meta data value by key.
+       * @param {string} key The key of the meta-data to be returned.
+       * @return {*}
+       */
+      byKey: function(key) {
+        return this._metaData && this._metaData[key];
+      }
+
+    });
+
+  })();
+
+;
+
   /**
    * @demo demo/index.html
    * @polymerBehavior
@@ -7034,491 +6855,937 @@ this._removeChildren();
 
 
 ;
-/*
- * Crypto-JS v2.0.0
- * http://code.google.com/p/crypto-js/
- * Copyright (c) 2009, Jeff Mott. All rights reserved.
- * http://code.google.com/p/crypto-js/wiki/License
- */
-(function(){var c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";var d=window.Crypto={};var a=d.util={rotl:function(h,g){return(h<<g)|(h>>>(32-g))},rotr:function(h,g){return(h<<(32-g))|(h>>>g)},endian:function(h){if(h.constructor==Number){return a.rotl(h,8)&16711935|a.rotl(h,24)&4278255360}for(var g=0;g<h.length;g++){h[g]=a.endian(h[g])}return h},randomBytes:function(h){for(var g=[];h>0;h--){g.push(Math.floor(Math.random()*256))}return g},bytesToWords:function(h){for(var k=[],j=0,g=0;j<h.length;j++,g+=8){k[g>>>5]|=h[j]<<(24-g%32)}return k},wordsToBytes:function(i){for(var h=[],g=0;g<i.length*32;g+=8){h.push((i[g>>>5]>>>(24-g%32))&255)}return h},bytesToHex:function(g){for(var j=[],h=0;h<g.length;h++){j.push((g[h]>>>4).toString(16));j.push((g[h]&15).toString(16))}return j.join("")},hexToBytes:function(h){for(var g=[],i=0;i<h.length;i+=2){g.push(parseInt(h.substr(i,2),16))}return g},bytesToBase64:function(h){if(typeof btoa=="function"){return btoa(e.bytesToString(h))}for(var g=[],l=0;l<h.length;l+=3){var m=(h[l]<<16)|(h[l+1]<<8)|h[l+2];for(var k=0;k<4;k++){if(l*8+k*6<=h.length*8){g.push(c.charAt((m>>>6*(3-k))&63))}else{g.push("=")}}}return g.join("")},base64ToBytes:function(h){if(typeof atob=="function"){return e.stringToBytes(atob(h))}h=h.replace(/[^A-Z0-9+\/]/ig,"");for(var g=[],j=0,k=0;j<h.length;k=++j%4){if(k==0){continue}g.push(((c.indexOf(h.charAt(j-1))&(Math.pow(2,-2*k+8)-1))<<(k*2))|(c.indexOf(h.charAt(j))>>>(6-k*2)))}return g}};d.mode={};var b=d.charenc={};var f=b.UTF8={stringToBytes:function(g){return e.stringToBytes(unescape(encodeURIComponent(g)))},bytesToString:function(g){return decodeURIComponent(escape(e.bytesToString(g)))}};var e=b.Binary={stringToBytes:function(j){for(var g=[],h=0;h<j.length;h++){g.push(j.charCodeAt(h))}return g},bytesToString:function(g){for(var j=[],h=0;h<g.length;h++){j.push(String.fromCharCode(g[h]))}return j.join("")}}})();(function(){var g=Crypto,b=g.util,c=g.charenc,f=c.UTF8,e=c.Binary;var a=[1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298];var d=g.SHA256=function(j,h){var i=b.wordsToBytes(d._sha256(j));return h&&h.asBytes?i:h&&h.asString?e.bytesToString(i):b.bytesToHex(i)};d._sha256=function(q){if(q.constructor==String){q=f.stringToBytes(q)}var y=b.bytesToWords(q),z=q.length*8,r=[1779033703,3144134277,1013904242,2773480762,1359893119,2600822924,528734635,1541459225],s=[],K,J,I,G,F,E,D,C,B,A,p,o;y[z>>5]|=128<<(24-z%32);y[((z+64>>9)<<4)+15]=z;for(var B=0;B<y.length;B+=16){K=r[0];J=r[1];I=r[2];G=r[3];F=r[4];E=r[5];D=r[6];C=r[7];for(var A=0;A<64;A++){if(A<16){s[A]=y[A+B]}else{var n=s[A-15],u=s[A-2],M=((n<<25)|(n>>>7))^((n<<14)|(n>>>18))^(n>>>3),L=((u<<15)|(u>>>17))^((u<<13)|(u>>>19))^(u>>>10);s[A]=M+(s[A-7]>>>0)+L+(s[A-16]>>>0)}var t=F&E^~F&D,k=K&J^K&I^J&I,x=((K<<30)|(K>>>2))^((K<<19)|(K>>>13))^((K<<10)|(K>>>22)),v=((F<<26)|(F>>>6))^((F<<21)|(F>>>11))^((F<<7)|(F>>>25));p=(C>>>0)+v+t+(a[A])+(s[A]>>>0);o=x+k;C=D;D=E;E=F;F=G+p;G=I;I=J;J=K;K=p+o}r[0]+=K;r[1]+=J;r[2]+=I;r[3]+=G;r[4]+=F;r[5]+=E;r[6]+=D;r[7]+=C}return r};d._blocksize=16})();
-;
-/*
-    Copyright (c) 2015 Aurel Jared Dantis <jareddantis@gmail.com>,
-                  2013 Hunter Paolini <me@hpaolini.com>.
 
-    This file is part of the Kaomojify project, which can be accessed
-    at https://github.com/aureljared/kaomojify.
-    The project is governed by the GNU General Public License, which can
-    alse be found on the project page under the filename 'LICENSE.txt'.
-*/
-
-window.onload = function(){
-	var gs = JSON.parse(localStorage.getItem('general_settings'));
-	if(gs.password.hash.length>0){
-		var input = window.prompt("Please enter your password.", "");
-		if(input != null && Crypto.SHA256(input) === gs.password.hash){
- 			restore_options();
- 			document.body.style.display = "block !important";
-		}else{
- 			document.body.innerHTML="Access denied: Password is incorrect.";
- 			document.body.style.display = "block !important";
- 			while(document.getElementsByTagName('script').length>0){
-	 			document.head.removeChild(document.getElementsByTagName('script')[0]);
- 			}
-		}
-	}else{
-		restore_options();
- 		document.body.style.display = "block !important";
-	}
-};
-
-var Dom = {
-	get: function(el) {
-		if(typeof el === 'string'){
-			return document.getElementById(el);
-		}else{
-			return el;
-		}
-	},
-	add: function(el, dest) {
-		var el = this.get(el);
-		var dest = this.get(dest);
-		dest.appendChild(el);
-	},
-	remove: function(el) {
-		var el = this.get(el);
-		el.parentNode.removeChild(el);
-	}
-};
-
-var Event = {
-	add: function() {
-		if(window.addEventListener){
-			return function(el, type, fn){
-				Dom.get(el).addEventListener(type, fn, false);
-			};
-		}else if(window.attachEvent){
-			return function(el, type, fn){
-				var f = function(){
-					fn.call(Dom.get(el), window.event);
-				};
-				Dom.get(el).attachEvent('on' + type, f);
-			};
-		}
-	}()
-};
-
-Event.add(document, 'DOMContentLoaded', function(){
-  Event.add('btn_pass', 'click', setPassword);
-  Event.add('pwd_status', 'click', function(){
-    Dom.get('btn_pass').disabled=!this.checked;
-  });
-  Event.add('btn_advSettings', 'click', function(){
-    toogleList(null, 'adv_settings');
-  });
-  Event.add('lst_bs', 'click', function(){
-    toogleList(Dom.get("lst_bs"), 'blocked_url');
-  });
-  Event.add('lst_bk', 'click', function(){
-    toogleList(Dom.get("lst_bk"), 'blocked_word');
-  });
-  Event.add('lst_ts', 'click', function(){
-    toogleList(Dom.get("lst_ts"), 'trusted_url');
-  });
-  Event.add('lst_pf', 'click', function(){
-    toogleList(Dom.get("lst_pf"), 'profanity_word');
-  });
-  Event.add('btn_generate', 'click', genList);
-  Event.add('btn_reset', 'click', reset_options);
-  Event.add('btn_save', 'click', save_options);
-	Event.add('add_cf', 'click', function(){
-		var bu = Dom.get("bu").checked,
-		bw = Dom.get("bw").checked,
-		au = Dom.get("au").checked;
-				
-		if(!(bu || bw || au)){
-			alert("Please select the type of keyword to add.");
-			return false;
-		}
-
-		var keyword = Dom.get("keyword_cf").value;
-		keyword = keyword.replace(/<(.|\n)+?>/g,'');
-
-		if(bu){
-			list_bs[list_bs.length] = keyword;			
-			populateList('blocked_url', keyword);
-		}else if(bw){
-			list_bw[list_bw.length] = keyword;
-			populateList('blocked_word', keyword);
-		}else if(au){
-			list_ts[list_ts.length] = keyword;
-			populateList('trusted_url', keyword);
-		}else {return false;}
-	});
-	Event.add('add_pf', 'click', function(){
-		var keyword = Dom.get("keyword_pf").value;
-		keyword = keyword.replace(/<(.|\n)+?>/g,'');
-		list_pf[list_pf.length] = keyword;
-		populateList('profanity_word', keyword);
-	});
-});
-
-var populateList = function(list, keyword){
-	var el = document.createElement('p');
-	var remove = document.createElement('span');
-	remove.setAttribute('class', 'link');
-	remove.innerHTML = '[x]';
-	el.innerHTML = keyword;
-	Dom.add(remove, el);
-	Dom.add(el, list);
-
-	Event.add(remove, 'click', function(e){
-		var span = this.parentNode;
-		var keyword = span.innerHTML.replace(/<(.*)?>/g,'');
-		switch(span.parentNode.id){
-			case "blocked_url":
-				removeKeyword(list_bs, keyword);
-				break;
-			
-			case "blocked_word":
-				removeKeyword(list_bw, keyword);
-				break;
-			
-			case "trusted_url":
-				removeKeyword(list_ts, keyword);
-				break;
-			
-			case "profanity_word":
-				removeKeyword(list_pf, keyword);
-				break;
-			
-			default:
-				break;
-		}
-		Dom.remove(span);
-	});
-}
-
-var list_bs = list_bw = list_ts = list_pf = [], password = null;
-
-var removeKeyword = function(list, keyword){
-	
-	var len = list.length;
-	while(len--){
-		
-		// TODO: Fix bug where the last array items from
-		//  defaults.txt do not have weird new line char.
-		//  This string comparison fails because of it.
-		if(list[len] == keyword){
-			list.splice(len, 1);
-		}
-	};
-	
-};
-
-// Saves options
-var save_options = function(){
-	var content_filter = {
-		enabled : Dom.get("cf_status").checked,
-		advanced : {
-			warning : Dom.get("adv_warning").value || "This page is unavailable due to policy restrictions.",
-			stop_all : Dom.get("adv_stop").checked,
-			reason : Dom.get("adv_reason").checked,
-			redirect : (function(){
-				var adv_redirect = Dom.get("adv_redirect").value || "",
-						regex = /^(https?|ftp|file):\/\/.+$/i;
-				if(adv_redirect.length > 0 && !regex.test(adv_redirect)){
-					adv_redirect = "http://" + adv_redirect;
-				}
-				return adv_redirect;
-			})()
-		},
-		block : {
-			sites : list_bs,
-			words : list_bw
-		},
-		trust	:	{
-			sites : list_ts
-		}
-	};
-
-	var profanity_filter = {
-		enabled : Dom.get("pf_status").checked,
-		words : list_pf
-	};
-
-	var subscriptions = {
-		enabled : Dom.get("ls_status").checked,
-		url : Dom.get("ls_url").value,
-		content_filter : {
-			block : {},
-			trust : {}
-		},
-		profanity_filter : {}
-	};
-
-	//reference to background.html
-	var bg = chrome.extension.getBackgroundPage().tinyFilter_bg;
-
-	if(subscriptions.url.length > 0){
-		if(subscriptions.url != bg.prefs.subscriptions.url){
-			var response = bg.loadSubscription(subscriptions.url);
-			if(response){
-				subscriptions.content_filter.block.sites = (response.content_filter.block.sites) ? response.content_filter.block.sites : [];
-				subscriptions.content_filter.block.words = (response.content_filter.block.words) ? response.content_filter.block.words : [];
-				subscriptions.content_filter.trust.sites = (response.content_filter.trust.sites) ? response.content_filter.trust.sites : [];
-				subscriptions.profanity_filter.words = (response.profanity_filter.words) ? response.profanity_filter.words : [];
-				subscriptions.last_update = new Date().getTime();
-				//alert(subscriptions.last_update);
-			}else{
-				subscriptions.enabled = false;
-			}
-		}else{
-			subscriptions.content_filter.block.sites = bg.prefs.subscriptions.content_filter.block.sites;
-			subscriptions.content_filter.block.words = bg.prefs.subscriptions.content_filter.block.words;
-			subscriptions.content_filter.trust.sites = bg.prefs.subscriptions.content_filter.trust.sites;
-			subscriptions.profanity_filter.words = bg.prefs.subscriptions.profanity_filter.words;
-			subscriptions.last_update = (bg.prefs.subscriptions.last_update) ? bg.prefs.subscriptions.last_update : new Date().getTime();
-		}
-	}else{
-		subscriptions.enabled = false;
-	}
-
-	var general_settings = {
-		password : {
-			hash : (Dom.get('pwd_status').checked) ? password : ""
-		}
-	};
-	
-	localStorage.setItem('content_filter', JSON.stringify(content_filter));
-	localStorage.setItem('profanity_filter', JSON.stringify(profanity_filter));
-	localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
-	localStorage.setItem('general_settings', JSON.stringify(general_settings));
-	
-	//update background.html settings
-	bg.prefs.content_filter = content_filter;
-	bg.prefs.profanity_filter = profanity_filter;
-	bg.prefs.subscriptions = subscriptions;
-	bg.init();
-
-	var status = Dom.get("status");
-	status.removeAttribute("style");
-	setTimeout(function() {
-		status.setAttribute("style","visibility:hidden");
-	}, 750);
-};
-
-// Restores options
-var restore_options = function(){
-	//localStorage.clear();
-	
-	var cf = JSON.parse(localStorage.getItem('content_filter'));
-	Dom.get("cf_status").checked = cf.enabled || false;
-	Dom.get("adv_stop").checked = cf.advanced.stop_all || false;
- 	Dom.get("adv_reason").checked = cf.advanced.reason || false;
- 	Dom.get("adv_warning").value = cf.advanced.warning;
- 	Dom.get("adv_redirect").value = cf.advanced.redirect;
-	
-	var pf = JSON.parse(localStorage.getItem('profanity_filter'));
-	Dom.get("pf_status").checked = pf.enabled || false;
-	
-	var ls = JSON.parse(localStorage.getItem('subscriptions'));
-	Dom.get("ls_status").checked = ls.enabled || false;
-	Dom.get("ls_url").value = ls.url || "";
-	
-	var gs = JSON.parse(localStorage.getItem('general_settings'));
-	password = gs.password.hash;
-	Dom.get("pwd_status").checked = (gs.password.hash.length>0) ? true : false;
-	Dom.get("btn_pass").disabled = !Dom.get("pwd_status").checked;
-	
-	list_bs = cf.block.sites || [];
-	list_bw = cf.block.words || [];
-	list_ts = cf.trust.sites || [];
-	list_pf = pf.words || [];
-	
-	var i=0, l=Math.max(list_bw.length, list_pf.length, list_bs.length, list_ts.length);
-	while(i<l){
-		var l1 = list_bw[i], l2 = list_pf[i], l3 = list_bs[i], l4 = list_ts[i];
-		
-		if(l1){
-			populateList('blocked_word',l1);
-		}
-		
-		if(l2){
-			populateList('profanity_word',l2);
-		}
-		
-		if(l3){
-			populateList('blocked_url',l3);
-		}
-		
-		if(l4){
-			populateList('trusted_url',l4);
-		}
-		
-		i++;
-	};
-};
-
-var toogleList = function(e, id){
-	var el = Dom.get(id);
-	if(el.style.display == 'block'){
-		el.style.display = 'none';
-		if(e){
-			e.childNodes[0].innerHTML = '&#9662;';
-		}
-	}else{
-		el.style.display = 'block';
-		if(e){
-			e.childNodes[0].innerHTML = '&#9652;';
-		}
-	}
-}
-
-var setPassword = function(){
-	var pass1 = prompt("Please enter a password","");
-	if(pass1 !== null && pass1.length > 0){
-		var pass2 = prompt("Please confirm the password","");
-		if(pass1 === pass2){
-			password = Crypto.SHA256(pass1);
-			alert("Success! Please save your changes to store this password.");
-		}else{
-			alert("The passwords did NOT match. Please try again.");
-		}
-	}
-};
-
-var genList = function(){
-	var bg = chrome.extension.getBackgroundPage().tinyFilter_bg;
-	bg.generateSubscription();
-};
-
-var reset_options = function(){
-	var x = window.confirm("Are you sure you want to reset the settings?");
-	if(x){
-		localStorage.removeItem('general_settings');
-		localStorage.removeItem('content_filter');
-		localStorage.removeItem('profanity_filter');
-		localStorage.removeItem('subscriptions');
-		chrome.extension.getBackgroundPage().tinyFilter_bg.init();
-		window.location.reload();
-	}
-}
-
-;
-
-    Polymer({
-
-      is: 'iron-icon',
-
-      properties: {
-
-        /**
-         * The name of the icon to use. The name should be of the form:
-         * `iconset_name:icon_name`.
-         */
-        icon: {
-          type: String,
-          observer: '_iconChanged'
-        },
-
-        /**
-         * The name of the theme to used, if one is specified by the
-         * iconset.
-         */
-        theme: {
-          type: String,
-          observer: '_updateIcon'
-        },
-
-        /**
-         * If using iron-icon without an iconset, you can set the src to be
-         * the URL of an individual icon image file. Note that this will take
-         * precedence over a given icon attribute.
-         */
-        src: {
-          type: String,
-          observer: '_srcChanged'
-        }
-      },
-
-      _DEFAULT_ICONSET: 'icons',
-
-      _iconChanged: function(icon) {
-        var parts = (icon || '').split(':');
-        this._iconName = parts.pop();
-        this._iconsetName = parts.pop() || this._DEFAULT_ICONSET;
-        this._updateIcon();
-      },
-
-      _srcChanged: function(src) {
-        this._updateIcon();
-      },
-
-      _usesIconset: function() {
-        return this.icon || !this.src;
-      },
-
-      _updateIcon: function() {
-        if (this._usesIconset()) {
-          if (this._iconsetName) {
-            this._iconset = this.$.meta.byKey(this._iconsetName);
-            if (this._iconset) {
-              this._iconset.applyIcon(this, this._iconName, this.theme);
-            } else {
-              this._warn(this._logf('_updateIcon', 'could not find iconset `'
-                + this._iconsetName + '`, did you import the iconset?'));
-            }
-          }
-        } else {
-          if (!this._img) {
-            this._img = document.createElement('img');
-            this._img.style.width = '100%';
-            this._img.style.height = '100%';
-          }
-          this._img.src = this.src;
-          Polymer.dom(this.root).appendChild(this._img);
-        }
-      }
-
-    });
-
-  
-;
-  Polymer({
-    is: 'paper-material',
+  /**
+   * Use `Polymer.IronValidatableBehavior` to implement an element that validates user input.
+   *
+   * ### Accessiblity
+   *
+   * Changing the `invalid` property, either manually or by calling `validate()` will update the
+   * `aria-invalid` attribute.
+   *
+   * @demo demo/index.html
+   * @polymerBehavior
+   */
+  Polymer.IronValidatableBehavior = {
 
     properties: {
 
       /**
-       * The z-depth of this element, from 0-5. Setting to 0 will remove the
-       * shadow, and each increasing number greater than 0 will be "deeper"
-       * than the last.
-       *
-       * @attribute elevation
-       * @type number
-       * @default 1
+       * Namespace for this validator.
        */
-      elevation: {
-        type: Number,
-        reflectToAttribute: true,
-        value: 1
+      validatorType: {
+        type: String,
+        value: 'validator'
       },
 
       /**
-       * Set this to true to animate the shadow when setting a new
-       * `elevation` value.
-       *
-       * @attribute animated
-       * @type boolean
-       * @default false
+       * Name of the validator to use.
        */
-      animated: {
-        type: Boolean,
+      validator: {
+        type: String
+      },
+
+      /**
+       * True if the last call to `validate` is invalid.
+       */
+      invalid: {
+        notify: true,
         reflectToAttribute: true,
+        type: Boolean,
+        value: false
+      },
+
+      _validatorMeta: {
+        type: Object
+      }
+
+    },
+
+    observers: [
+      '_invalidChanged(invalid)'
+    ],
+
+    get _validator() {
+      return this._validatorMeta && this._validatorMeta.byKey(this.validator);
+    },
+
+    ready: function() {
+      this._validatorMeta = new Polymer.IronMeta({type: this.validatorType});
+    },
+
+    _invalidChanged: function() {
+      if (this.invalid) {
+        this.setAttribute('aria-invalid', 'true');
+      } else {
+        this.removeAttribute('aria-invalid');
+      }
+    },
+
+    /**
+     * @return {boolean} True if the validator `validator` exists.
+     */
+    hasValidator: function() {
+      return this._validator != null;
+    },
+
+    /**
+     * @param {Object} values Passed to the validator's `validate()` function.
+     * @return {boolean} True if `values` is valid.
+     */
+    validate: function(values) {
+      var valid = this._validator && this._validator.validate(values);
+      this.invalid = !valid;
+      return valid;
+    }
+
+  };
+
+
+;
+
+/*
+`<iron-input>` adds two-way binding and custom validators using `Polymer.IronValidatorBehavior`
+to `<input>`.
+
+### Two-way binding
+
+By default you can only get notified of changes to an `input`'s `value` due to user input:
+
+    <input value="{{myValue::input}}">
+
+`iron-input` adds the `bind-value` property that mirrors the `value` property, and can be used
+for two-way data binding. `bind-value` will notify if it is changed either by user input or by script.
+
+    <input is="iron-input" bind-value="{{myValue}}">
+
+### Custom validators
+
+You can use custom validators that implement `Polymer.IronValidatorBehavior` with `<iron-input>`.
+
+    <input is="iron-input" validator="my-custom-validator">
+
+### Stopping invalid input
+
+It may be desirable to only allow users to enter certain characters. You can use the
+`prevent-invalid-input` and `allowed-pattern` attributes together to accomplish this. This feature
+is separate from validation, and `allowed-pattern` does not affect how the input is validated.
+
+    <!-- only allow characters that match [0-9] -->
+    <input is="iron-input" prevent-invaild-input allowed-pattern="[0-9]">
+
+@hero hero.svg
+@demo demo/index.html
+*/
+
+  Polymer({
+
+    is: 'iron-input',
+
+    extends: 'input',
+
+    behaviors: [
+      Polymer.IronValidatableBehavior
+    ],
+
+    properties: {
+
+      /**
+       * Use this property instead of `value` for two-way data binding.
+       */
+      bindValue: {
+        observer: '_bindValueChanged',
+        type: String
+      },
+
+      /**
+       * Set to true to prevent the user from entering invalid input. The new input characters are
+       * matched with `allowedPattern` if it is set, otherwise it will use the `pattern` attribute if
+       * set, or the `type` attribute (only supported for `type=number`).
+       */
+      preventInvalidInput: {
+        type: Boolean
+      },
+
+      /**
+       * Regular expression to match valid input characters.
+       */
+      allowedPattern: {
+        type: String
+      },
+
+      _previousValidInput: {
+        type: String,
+        value: ''
+      },
+
+      _patternAlreadyChecked: {
+        type: Boolean,
         value: false
       }
+
+    },
+
+    listeners: {
+      'input': '_onInput',
+      'keypress': '_onKeypress'
+    },
+
+    get _patternRegExp() {
+      var pattern;
+      if (this.allowedPattern) {
+        pattern = new RegExp(this.allowedPattern);
+      } else if (this.pattern) {
+        pattern = new RegExp(this.pattern);
+      } else {
+        switch (this.type) {
+          case 'number':
+            pattern = /[0-9.,e-]/;
+            break;
+        }
+      }
+      return pattern;
+    },
+
+    ready: function() {
+      this.bindValue = this.value;
+    },
+
+    _bindValueChanged: function() {
+      if (this.value !== this.bindValue) {
+        this.value = !this.bindValue ? '' : this.bindValue;
+      }
+      // manually notify because we don't want to notify until after setting value
+      this.fire('bind-value-changed', {value: this.bindValue});
+    },
+
+    _onInput: function() {
+      // Need to validate each of the characters pasted if they haven't
+      // been validated inside `_onKeypress` already.
+      if (this.preventInvalidInput && !this._patternAlreadyChecked) {
+        var valid = this._checkPatternValidity();
+        if (!valid) {
+          this.value = this._previousValidInput;
+        }
+      }
+
+      this.bindValue = this.value;
+      this._previousValidInput = this.value;
+      this._patternAlreadyChecked = false;
+    },
+
+    _isPrintable: function(event) {
+      // What a control/printable character is varies wildly based on the browser.
+      // - most control characters (arrows, backspace) do not send a `keypress` event
+      //   in Chrome, but the *do* on Firefox
+      // - in Firefox, when they do send a `keypress` event, control chars have
+      //   a charCode = 0, keyCode = xx (for ex. 40 for down arrow)
+      // - printable characters always send a keypress event.
+      // - in Firefox, printable chars always have a keyCode = 0. In Chrome, the keyCode
+      //   always matches the charCode.
+      // None of this makes any sense.
+
+      var nonPrintable =
+        (event.keyCode == 8)   ||  // backspace
+        (event.keyCode == 19)  ||  // pause
+        (event.keyCode == 20)  ||  // caps lock
+        (event.keyCode == 27)  ||  // escape
+        (event.keyCode == 45)  ||  // insert
+        (event.keyCode == 46)  ||  // delete
+        (event.keyCode == 144) ||  // num lock
+        (event.keyCode == 145) ||  // scroll lock
+        (event.keyCode > 32 && event.keyCode < 41)   || // page up/down, end, home, arrows
+        (event.keyCode > 111 && event.keyCode < 124); // fn keys
+
+      return !(event.charCode == 0 && nonPrintable);
+    },
+
+    _onKeypress: function(event) {
+      if (!this.preventInvalidInput && this.type !== 'number') {
+        return;
+      }
+      var regexp = this._patternRegExp;
+      if (!regexp) {
+        return;
+      }
+
+      // Handle special keys and backspace
+      if (event.metaKey || event.ctrlKey || event.altKey)
+        return;
+
+      // Check the pattern either here or in `_onInput`, but not in both.
+      this._patternAlreadyChecked = true;
+
+      var thisChar = String.fromCharCode(event.charCode);
+      if (this._isPrintable(event) && !regexp.test(thisChar)) {
+        event.preventDefault();
+      }
+    },
+
+    _checkPatternValidity: function() {
+      var regexp = this._patternRegExp;
+      if (!regexp) {
+        return true;
+      }
+      for (var i = 0; i < this.value.length; i++) {
+        if (!regexp.test(this.value[i])) {
+          return false;
+        }
+      }
+      return true;
+    },
+
+    /**
+     * Returns true if `value` is valid. The validator provided in `validator` will be used first,
+     * then any constraints.
+     * @return {boolean} True if the value is valid.
+     */
+    validate: function() {
+      // Empty, non-required input is valid.
+      if (!this.required && this.value == '') {
+        this.invalid = false;
+        return true;
+      }
+
+      var valid;
+      if (this.hasValidator()) {
+        valid = Polymer.IronValidatableBehavior.validate.call(this, this.value);
+      } else {
+        this.invalid = !this.validity.valid;
+        valid = this.validity.valid;
+      }
+      this.fire('iron-input-validate');
+      return valid;
     }
+
+  });
+
+  /*
+  The `iron-input-validate` event is fired whenever `validate()` is called.
+  @event iron-input-validate
+  */
+
+
+;
+
+  /**
+
+  @demo demo/index.html
+  @polymerBehavior
+
+  */
+  Polymer.IronFormElementBehavior = {
+
+    properties: {
+      /**
+       * Fired when the element is added to an `iron-form`.
+       *
+       * @event iron-form-element-register
+       */
+
+      /**
+       * Fired when the element is removed from an `iron-form`.
+       *
+       * @event iron-form-element-unregister
+       */
+
+      /**
+       * The name of this element.
+       */
+      name: {
+        type: String
+      },
+
+      /**
+       * The value for this element.
+       */
+      value: {
+        notify: true,
+        type: String
+      },
+
+      /**
+       * Need to keep a reference to the form this element is registered
+       * to, so that it can unregister if detached.
+       */
+      _parentForm: {
+        type: Object
+      }
+    },
+
+    attached: function() {
+      this._parentForm = Polymer.dom(this).parentNode;
+      this.fire('iron-form-element-register');
+    },
+
+    detached: function() {
+      if (this._parentForm) {
+        this._parentForm.fire('iron-form-element-unregister', {target: this});
+      }
+    }
+
+  };
+
+
+;
+
+  /**
+   * Use `Polymer.PaperInputBehavior` to implement inputs with `<paper-input-container>`. This
+   * behavior is implemented by `<paper-input>`. It exposes a number of properties from
+   * `<paper-input-container>` and `<input is="iron-input">` and they should be bound in your
+   * template.
+   *
+   * The input element can be accessed by the `inputElement` property if you need to access
+   * properties or methods that are not exposed.
+   * @polymerBehavior Polymer.PaperInputBehavior
+   */
+  Polymer.PaperInputBehaviorImpl = {
+
+    properties: {
+
+      /**
+       * The label for this input. Bind this to `<paper-input-container>`'s `label` property.
+       */
+      label: {
+        type: String
+      },
+
+      /**
+       * The value for this input. Bind this to the `<input is="iron-input">`'s `bindValue`
+       * property, or the value property of your input that is `notify:true`.
+       */
+      value: {
+        notify: true,
+        type: String
+      },
+
+      /**
+       * Set to true to disable this input. Bind this to both the `<paper-input-container>`'s
+       * and the input's `disabled` property.
+       */
+      disabled: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Returns true if the value is invalid. Bind this to both the `<paper-input-container>`'s
+       * and the input's `invalid` property.
+       */
+      invalid: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Set to true to prevent the user from entering invalid input. Bind this to the
+       * `<input is="iron-input">`'s `preventInvalidInput` property.
+       */
+      preventInvalidInput: {
+        type: Boolean
+      },
+
+      /**
+       * Set this to specify the pattern allowed by `preventInvalidInput`. Bind this to the
+       * `<input is="iron-input">`'s `allowedPattern` property.
+       */
+      allowedPattern: {
+        type: String
+      },
+
+      /**
+       * The type of the input. The supported types are `text`, `number` and `password`. Bind this
+       * to the `<input is="iron-input">`'s `type` property.
+       */
+      type: {
+        type: String
+      },
+
+      /**
+       * The datalist of the input (if any). This should match the id of an existing <datalist>. Bind this
+       * to the `<input is="iron-input">`'s `list` property.
+       */
+      list: {
+        type: String
+      },
+
+      /**
+       * A pattern to validate the `input` with. Bind this to the `<input is="iron-input">`'s
+       * `pattern` property.
+       */
+      pattern: {
+        type: String
+      },
+
+      /**
+       * Set to true to mark the input as required. Bind this to the `<input is="iron-input">`'s
+       * `required` property.
+       */
+      required: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * The maximum length of the input value. Bind this to the `<input is="iron-input">`'s
+       * `maxlength` property.
+       */
+      maxlength: {
+        type: Number
+      },
+
+      /**
+       * The error message to display when the input is invalid. Bind this to the
+       * `<paper-input-error>`'s content, if using.
+       */
+      errorMessage: {
+        type: String
+      },
+
+      /**
+       * Set to true to show a character counter.
+       */
+      charCounter: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Set to true to disable the floating label. Bind this to the `<paper-input-container>`'s
+       * `noLabelFloat` property.
+       */
+      noLabelFloat: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Set to true to always float the label. Bind this to the `<paper-input-container>`'s
+       * `alwaysFloatLabel` property.
+       */
+      alwaysFloatLabel: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Set to true to auto-validate the input value. Bind this to the `<paper-input-container>`'s
+       * `autoValidate` property.
+       */
+      autoValidate: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Name of the validator to use. Bind this to the `<input is="iron-input">`'s `validator`
+       * property.
+       */
+      validator: {
+        type: String
+      },
+
+      // HTMLInputElement attributes for binding if needed
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `autocomplete` property.
+       */
+      autocomplete: {
+        type: String,
+        value: 'off'
+      },
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `autofocus` property.
+       */
+      autofocus: {
+        type: Boolean
+      },
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `inputmode` property.
+       */
+      inputmode: {
+        type: String
+      },
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `minlength` property.
+       */
+      minlength: {
+        type: Number
+      },
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `name` property.
+       */
+      name: {
+        type: String
+      },
+
+      /**
+       * A placeholder string in addition to the label. If this is set, the label will always float.
+       */
+      placeholder: {
+        type: String,
+        // need to set a default so _computeAlwaysFloatLabel is run
+        value: ''
+      },
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `readonly` property.
+       */
+      readonly: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Bind this to the `<input is="iron-input">`'s `size` property.
+       */
+      size: {
+        type: Number
+      },
+
+      _ariaDescribedBy: {
+        type: String,
+        value: ''
+      }
+
+    },
+
+    listeners: {
+      'addon-attached': '_onAddonAttached'
+    },
+
+    /**
+     * Returns a reference to the input element.
+     */
+    get inputElement() {
+      return this.$.input;
+    },
+
+    attached: function() {
+      this._updateAriaLabelledBy();
+    },
+
+    _appendStringWithSpace: function(str, more) {
+      if (str) {
+        str = str + ' ' + more;
+      } else {
+        str = more;
+      }
+      return str;
+    },
+
+    _onAddonAttached: function(event) {
+      var target = event.path ? event.path[0] : event.target;
+      if (target.id) {
+        this._ariaDescribedBy = this._appendStringWithSpace(this._ariaDescribedBy, target.id);
+      } else {
+        var id = 'paper-input-add-on-' + Math.floor((Math.random() * 100000));
+        target.id = id;
+        this._ariaDescribedBy = this._appendStringWithSpace(this._ariaDescribedBy, id);
+      }
+    },
+
+    /**
+     * Validates the input element and sets an error style if needed.
+     */
+     validate: function() {
+       return this.inputElement.validate();
+     },
+
+    /**
+     * Restores the cursor to its original position after updating the value.
+     * @param {string} newValue The value that should be saved.
+     */
+    updateValueAndPreserveCaret: function(newValue) {
+      // Not all elements might have selection, and even if they have the
+      // right properties, accessing them might throw an exception (like for
+      // <input type=number>)
+      try {
+        var start = this.inputElement.selectionStart;
+        this.value = newValue;
+
+        // The cursor automatically jumps to the end after re-setting the value,
+        // so restore it to its original position.
+        this.inputElement.selectionStart = start;
+        this.inputElement.selectionEnd = start;
+      } catch (e) {
+        // Just set the value and give up on the caret.
+        this.value = newValue;
+      }
+    },
+
+    _computeAlwaysFloatLabel: function(alwaysFloatLabel, placeholder) {
+      return placeholder || alwaysFloatLabel;
+    },
+
+    _updateAriaLabelledBy: function() {
+      var label = Polymer.dom(this.root).querySelector('label');
+      if (!label) {
+        this._ariaLabelledBy = '';
+        return;
+      }
+      var labelledBy;
+      if (label.id) {
+        labelledBy = label.id;
+      } else {
+        labelledBy = 'paper-input-label-' + new Date().getUTCMilliseconds();
+        label.id = labelledBy;
+      }
+      this._ariaLabelledBy = labelledBy;
+    }
+
+  };
+
+  Polymer.PaperInputBehavior = [Polymer.IronControlState, Polymer.PaperInputBehaviorImpl];
+
+
+;
+
+  /**
+   * Use `Polymer.PaperInputAddonBehavior` to implement an add-on for `<paper-input-container>`. A
+   * add-on appears below the input, and may display information based on the input value and
+   * validity such as a character counter or an error message.
+   * @polymerBehavior
+   */
+  Polymer.PaperInputAddonBehavior = {
+
+    hostAttributes: {
+      'add-on': ''
+    },
+
+    attached: function() {
+      this.fire('addon-attached');
+    },
+
+    /**
+     * The function called by `<paper-input-container>` when the input value or validity changes.
+     * @param {{
+     *   inputElement: (Node|undefined),
+     *   value: (string|undefined),
+     *   invalid: (boolean|undefined)
+     * }} state All properties are optional -
+     *     inputElement: The input element.
+     *     value: The input value.
+     *     invalid: True if the input value is invalid.
+     */
+    update: function(state) {
+    }
+
+  };
+
+
+;
+
+  /**
+   * `Polymer.PaperInkyFocusBehavior` implements a ripple when the element has keyboard focus.
+   *
+   * @polymerBehavior Polymer.PaperInkyFocusBehavior
+   */
+  Polymer.PaperInkyFocusBehaviorImpl = {
+
+    observers: [
+      '_focusedChanged(receivedFocusFromKeyboard)'
+    ],
+
+    _focusedChanged: function(receivedFocusFromKeyboard) {
+      if (!this.$.ink) {
+        return;
+      }
+
+      this.$.ink.holdDown = receivedFocusFromKeyboard;
+    }
+
+  };
+
+  /** @polymerBehavior Polymer.PaperInkyFocusBehavior */
+  Polymer.PaperInkyFocusBehavior = [
+    Polymer.IronButtonState,
+    Polymer.IronControlState,
+    Polymer.PaperInkyFocusBehaviorImpl
+  ];
+
+
+;
+  /**
+   * The `iron-iconset-svg` element allows users to define their own icon sets
+   * that contain svg icons. The svg icon elements should be children of the
+   * `iron-iconset-svg` element. Multiple icons should be given distinct id's.
+   *
+   * Using svg elements to create icons has a few advantages over traditional
+   * bitmap graphics like jpg or png. Icons that use svg are vector based so they
+   * are resolution independent and should look good on any device. They are
+   * stylable via css. Icons can be themed, colorized, and even animated.
+   *
+   * Example:
+   *
+   *     <iron-iconset-svg name="my-svg-icons" size="24">
+   *       <svg>
+   *         <defs>
+   *           <g id="shape">
+   *             <rect x="50" y="50" width="50" height="50" />
+   *             <circle cx="50" cy="50" r="50" />
+   *           </g>
+   *         </defs>
+   *       </svg>
+   *     </iron-iconset-svg>
+   *
+   * This will automatically register the icon set "my-svg-icons" to the iconset
+   * database.  To use these icons from within another element, make a
+   * `iron-iconset` element and call the `byId` method
+   * to retrieve a given iconset. To apply a particular icon inside an
+   * element use the `applyIcon` method. For example:
+   *
+   *     iconset.applyIcon(iconNode, 'car');
+   *
+   * @element iron-iconset-svg
+   * @demo demo/index.html
+   */
+  Polymer({
+
+    is: 'iron-iconset-svg',
+
+    properties: {
+
+      /**
+       * The name of the iconset.
+       *
+       * @attribute name
+       * @type string
+       */
+      name: {
+        type: String,
+        observer: '_nameChanged'
+      },
+
+      /**
+       * The size of an individual icon. Note that icons must be square.
+       *
+       * @attribute iconSize
+       * @type number
+       * @default 24
+       */
+      size: {
+        type: Number,
+        value: 24
+      }
+
+    },
+
+    /**
+     * Construct an array of all icon names in this iconset.
+     *
+     * @return {!Array} Array of icon names.
+     */
+    getIconNames: function() {
+      this._icons = this._createIconMap();
+      return Object.keys(this._icons).map(function(n) {
+        return this.name + ':' + n;
+      }, this);
+    },
+
+    /**
+     * Applies an icon to the given element.
+     *
+     * An svg icon is prepended to the element's shadowRoot if it exists,
+     * otherwise to the element itself.
+     *
+     * @method applyIcon
+     * @param {Element} element Element to which the icon is applied.
+     * @param {string} iconName Name of the icon to apply.
+     * @return {Element} The svg element which renders the icon.
+     */
+    applyIcon: function(element, iconName) {
+      // insert svg element into shadow root, if it exists
+      element = element.root || element;
+      // Remove old svg element
+      this.removeIcon(element);
+      // install new svg element
+      var svg = this._cloneIcon(iconName);
+      if (svg) {
+        var pde = Polymer.dom(element);
+        pde.insertBefore(svg, pde.childNodes[0]);
+        return element._svgIcon = svg;
+      }
+      return null;
+    },
+
+    /**
+     * Remove an icon from the given element by undoing the changes effected
+     * by `applyIcon`.
+     *
+     * @param {Element} element The element from which the icon is removed.
+     */
+    removeIcon: function(element) {
+      // Remove old svg element
+      if (element._svgIcon) {
+        Polymer.dom(element).removeChild(element._svgIcon);
+        element._svgIcon = null;
+      }
+    },
+
+    /**
+     *
+     * When name is changed, register iconset metadata
+     *
+     */
+    _nameChanged: function() {
+      new Polymer.IronMeta({type: 'iconset', key: this.name, value: this});
+    },
+
+    /**
+     * Create a map of child SVG elements by id.
+     *
+     * @return {!Object} Map of id's to SVG elements.
+     */
+    _createIconMap: function() {
+      // Objects chained to Object.prototype (`{}`) have members. Specifically,
+      // on FF there is a `watch` method that confuses the icon map, so we
+      // need to use a null-based object here.
+      var icons = Object.create(null);
+      Polymer.dom(this).querySelectorAll('[id]')
+        .forEach(function(icon) {
+          icons[icon.id] = icon;
+        });
+      return icons;
+    },
+
+    /**
+     * Produce installable clone of the SVG element matching `id` in this
+     * iconset, or `undefined` if there is no matching element.
+     *
+     * @return {Element} Returns an installable clone of the SVG element
+     * matching `id`.
+     */
+    _cloneIcon: function(id) {
+      // create the icon map on-demand, since the iconset itself has no discrete
+      // signal to know when it's children are fully parsed
+      this._icons = this._icons || this._createIconMap();
+      return this._prepareSvgClone(this._icons[id], this.size);
+    },
+
+    /**
+     * @param {Element} sourceSvg
+     * @param {number} size
+     * @return {Element}
+     */
+    _prepareSvgClone: function(sourceSvg, size) {
+      if (sourceSvg) {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', ['0', '0', size, size].join(' '));
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        // TODO(dfreedm): `pointer-events: none` works around https://crbug.com/370136
+        // TODO(sjmiles): inline style may not be ideal, but avoids requiring a shadow-root
+        svg.style.cssText = 'pointer-events: none; display: block; width: 100%; height: 100%;';
+        svg.appendChild(sourceSvg.cloneNode(true)).removeAttribute('id');
+        return svg;
+      }
+      return null;
+    }
+
   });
 
 ;
@@ -8089,6 +8356,122 @@ var reset_options = function(){
   })();
 
 ;
+
+    Polymer({
+
+      is: 'iron-icon',
+
+      properties: {
+
+        /**
+         * The name of the icon to use. The name should be of the form:
+         * `iconset_name:icon_name`.
+         */
+        icon: {
+          type: String,
+          observer: '_iconChanged'
+        },
+
+        /**
+         * The name of the theme to used, if one is specified by the
+         * iconset.
+         */
+        theme: {
+          type: String,
+          observer: '_updateIcon'
+        },
+
+        /**
+         * If using iron-icon without an iconset, you can set the src to be
+         * the URL of an individual icon image file. Note that this will take
+         * precedence over a given icon attribute.
+         */
+        src: {
+          type: String,
+          observer: '_srcChanged'
+        }
+      },
+
+      _DEFAULT_ICONSET: 'icons',
+
+      _iconChanged: function(icon) {
+        var parts = (icon || '').split(':');
+        this._iconName = parts.pop();
+        this._iconsetName = parts.pop() || this._DEFAULT_ICONSET;
+        this._updateIcon();
+      },
+
+      _srcChanged: function(src) {
+        this._updateIcon();
+      },
+
+      _usesIconset: function() {
+        return this.icon || !this.src;
+      },
+
+      _updateIcon: function() {
+        if (this._usesIconset()) {
+          if (this._iconsetName) {
+            this._iconset = this.$.meta.byKey(this._iconsetName);
+            if (this._iconset) {
+              this._iconset.applyIcon(this, this._iconName, this.theme);
+            } else {
+              this._warn(this._logf('_updateIcon', 'could not find iconset `'
+                + this._iconsetName + '`, did you import the iconset?'));
+            }
+          }
+        } else {
+          if (!this._img) {
+            this._img = document.createElement('img');
+            this._img.style.width = '100%';
+            this._img.style.height = '100%';
+          }
+          this._img.src = this.src;
+          Polymer.dom(this.root).appendChild(this._img);
+        }
+      }
+
+    });
+
+  
+;
+  Polymer({
+    is: 'paper-material',
+
+    properties: {
+
+      /**
+       * The z-depth of this element, from 0-5. Setting to 0 will remove the
+       * shadow, and each increasing number greater than 0 will be "deeper"
+       * than the last.
+       *
+       * @attribute elevation
+       * @type number
+       * @default 1
+       */
+      elevation: {
+        type: Number,
+        reflectToAttribute: true,
+        value: 1
+      },
+
+      /**
+       * Set this to true to animate the shadow when setting a new
+       * `elevation` value.
+       *
+       * @attribute animated
+       * @type boolean
+       * @default false
+       */
+      animated: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: false
+      }
+    }
+  });
+
+;
   Polymer({
     is: 'paper-fab',
 
@@ -8187,3 +8570,632 @@ var reset_options = function(){
     }
   });
 
+
+;
+(function() {
+
+  Polymer({
+
+    is: 'paper-input-container',
+
+    properties: {
+
+      /**
+       * Set to true to disable the floating label. The label disappears when the input value is
+       * not null.
+       */
+      noLabelFloat: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Set to true to always float the floating label.
+       */
+      alwaysFloatLabel: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * The attribute to listen for value changes on.
+       */
+      attrForValue: {
+        type: String,
+        value: 'bind-value'
+      },
+
+      /**
+       * Set to true to auto-validate the input value when it changes.
+       */
+      autoValidate: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * True if the input is invalid. This property is set automatically when the input value
+       * changes if auto-validating, or when the `iron-input-valid` event is heard from a child.
+       */
+      invalid: {
+        observer: '_invalidChanged',
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * True if the input has focus.
+       */
+      focused: {
+        readOnly: true,
+        type: Boolean,
+        value: false
+      },
+
+      _addons: {
+        type: Array
+        // do not set a default value here intentionally - it will be initialized lazily when a
+        // distributed child is attached, which may occur before configuration for this element
+        // in polyfill.
+      },
+
+      _inputHasContent: {
+        type: Boolean,
+        value: false
+      },
+
+      _inputSelector: {
+        type: String,
+        value: 'input,textarea,.paper-input-input'
+      },
+
+      _boundOnFocus: {
+        type: Function,
+        value: function() {
+          return this._onFocus.bind(this);
+        }
+      },
+
+      _boundOnBlur: {
+        type: Function,
+        value: function() {
+          return this._onBlur.bind(this);
+        }
+      },
+
+      _boundOnInput: {
+        type: Function,
+        value: function() {
+          return this._onInput.bind(this);
+        }
+      },
+
+      _boundValueChanged: {
+        type: Function,
+        value: function() {
+          return this._onValueChanged.bind(this);
+        }
+      }
+
+    },
+
+    listeners: {
+      'addon-attached': '_onAddonAttached',
+      'iron-input-validate': '_onIronInputValidate'
+    },
+
+    get _valueChangedEvent() {
+      return this.attrForValue + '-changed';
+    },
+
+    get _propertyForValue() {
+      return Polymer.CaseMap.dashToCamelCase(this.attrForValue);
+    },
+
+    get _inputElement() {
+      return Polymer.dom(this).querySelector(this._inputSelector);
+    },
+
+    ready: function() {
+      if (!this._addons) {
+        this._addons = [];
+      }
+      this.addEventListener('focus', this._boundOnFocus, true);
+      this.addEventListener('blur', this._boundOnBlur, true);
+      if (this.attrForValue) {
+        this._inputElement.addEventListener(this._valueChangedEvent, this._boundValueChanged);
+      } else {
+        this.addEventListener('input', this._onInput);
+      }
+    },
+
+    attached: function() {
+      this._handleValue(this._inputElement);
+    },
+
+    _onAddonAttached: function(event) {
+      if (!this._addons) {
+        this._addons = [];
+      }
+      var target = event.target;
+      if (this._addons.indexOf(target) === -1) {
+        this._addons.push(target);
+        if (this.isAttached) {
+          this._handleValue(this._inputElement);
+        }
+      }
+    },
+
+    _onFocus: function() {
+      this._setFocused(true);
+    },
+
+    _onBlur: function() {
+      this._setFocused(false);
+    },
+
+    _onInput: function(event) {
+      this._handleValue(event.target);
+    },
+
+    _onValueChanged: function(event) {
+      this._handleValue(event.target);
+    },
+
+    _handleValue: function(inputElement) {
+      var value = inputElement[this._propertyForValue] || inputElement.value;
+
+      if (this.autoValidate) {
+        var valid;
+        if (inputElement.validate) {
+          valid = inputElement.validate(value);
+        } else {
+          valid = inputElement.checkValidity();
+        }
+        this.invalid = !valid;
+      }
+
+      // type="number" hack needed because this.value is empty until it's valid
+      if (value || (inputElement.type === 'number' && !inputElement.checkValidity())) {
+        this._inputHasContent = true;
+      } else {
+        this._inputHasContent = false;
+      }
+
+      this.updateAddons({
+        inputElement: inputElement,
+        value: value,
+        invalid: this.invalid
+      });
+    },
+
+    _onIronInputValidate: function(event) {
+      this.invalid = this._inputElement.invalid;
+    },
+
+    _invalidChanged: function() {
+      if (this._addons) {
+        this.updateAddons({invalid: this.invalid});
+      }
+    },
+
+    /**
+     * Call this to update the state of add-ons.
+     * @param {Object} state Add-on state.
+     */
+    updateAddons: function(state) {
+      for (var addon, index = 0; addon = this._addons[index]; index++) {
+        addon.update(state);
+      }
+    },
+
+    _computeInputContentClass: function(noLabelFloat, alwaysFloatLabel, focused, invalid, _inputHasContent) {
+      var cls = 'input-content';
+      if (!noLabelFloat) {
+        if (alwaysFloatLabel || _inputHasContent) {
+          cls += ' label-is-floating';
+          if (invalid) {
+            cls += ' is-invalid';
+          } else if (focused) {
+            cls += " label-is-highlighted";
+          }
+        }
+      } else {
+        if (_inputHasContent) {
+          cls += ' label-is-hidden';
+        }
+      }
+      return cls;
+    },
+
+    _computeUnderlineClass: function(focused, invalid) {
+      var cls = 'underline';
+      if (invalid) {
+        cls += ' is-invalid';
+      } else if (focused) {
+        cls += ' is-highlighted'
+      }
+      return cls;
+    },
+
+    _computeAddOnContentClass: function(focused, invalid) {
+      var cls = 'add-on-content';
+      if (invalid) {
+        cls += ' is-invalid';
+      } else if (focused) {
+        cls += ' is-highlighted'
+      }
+      return cls;
+    }
+
+  });
+
+})();
+
+;
+
+(function() {
+
+  Polymer({
+
+    is: 'paper-input-error',
+
+    behaviors: [
+      Polymer.PaperInputAddonBehavior
+    ],
+
+    hostAttributes: {
+      'role': 'alert'
+    },
+
+    properties: {
+
+      /**
+       * True if the error is showing.
+       */
+      invalid: {
+        readOnly: true,
+        reflectToAttribute: true,
+        type: Boolean
+      }
+
+    },
+
+    update: function(state) {
+      this._setInvalid(state.invalid);
+    }
+
+  })
+
+})();
+
+
+;
+
+(function() {
+
+  Polymer({
+
+    is: 'paper-input-char-counter',
+
+    behaviors: [
+      Polymer.PaperInputAddonBehavior
+    ],
+
+    properties: {
+
+      _charCounterStr: {
+        type: String,
+        value: '0'
+      }
+
+    },
+
+    update: function(state) {
+      if (!state.inputElement) {
+        return;
+      }
+
+      state.value = state.value || '';
+
+      // Account for the textarea's new lines.
+      var str = state.value.replace(/(\r\n|\n|\r)/g, '--').length;
+
+      if (state.inputElement.hasAttribute('maxlength')) {
+        str += '/' + state.inputElement.getAttribute('maxlength');
+      }
+      this._charCounterStr = str;
+    }
+
+  });
+
+})();
+
+
+;
+
+(function() {
+
+  Polymer({
+
+    is: 'paper-input',
+
+    behaviors: [
+      Polymer.PaperInputBehavior,
+      Polymer.IronControlState
+    ]
+
+  })
+
+})();
+
+
+;
+
+    (function() {
+      'use strict';
+
+      Polymer.IronA11yAnnouncer = Polymer({
+        is: 'iron-a11y-announcer',
+
+        properties: {
+
+          /**
+           * The value of mode is used to set the `aria-live` attribute
+           * for the element that will be announced. Valid values are: `off`,
+           * `polite` and `assertive`.
+           */
+          mode: {
+            type: String,
+            value: 'polite'
+          },
+
+          _text: {
+            type: String,
+            value: ''
+          }
+        },
+
+        created: function() {
+          if (!Polymer.IronA11yAnnouncer.instance) {
+            Polymer.IronA11yAnnouncer.instance = this;
+          }
+
+          document.body.addEventListener('iron-announce', this._onIronAnnounce.bind(this));
+        },
+
+        /**
+         * Cause a text string to be announced by screen readers.
+         *
+         * @param {string} text The text that should be announced.
+         */
+        announce: function(text) {
+          this._text = '';
+          this.async(function() {
+            this._text = text;
+          }, 100);
+        },
+
+        _onIronAnnounce: function(event) {
+          if (event.detail && event.detail.text) {
+            this.announce(event.detail.text);
+          }
+        }
+      });
+
+      Polymer.IronA11yAnnouncer.instance = null;
+
+      Polymer.IronA11yAnnouncer.requestAvailability = function() {
+        if (!Polymer.IronA11yAnnouncer.instance) {
+          document.createElement('iron-a11y-announcer');
+        }
+
+        document.body.appendChild(Polymer.IronA11yAnnouncer.instance);
+      };
+    })();
+
+  
+;
+(function() {
+
+  var PaperToast = Polymer({
+    is: 'paper-toast',
+
+    properties: {
+      /**
+       * The duration in milliseconds to show the toast.
+       */
+      duration: {
+        type: Number,
+        value: 3000
+      },
+
+      /**
+       * The text to display in the toast.
+       */
+      text: {
+        type: String,
+        value: ""
+      },
+
+      /**
+       * True if the toast is currently visible.
+       */
+      visible: {
+        type: Boolean,
+        readOnly: true,
+        value: false,
+        observer: '_visibleChanged'
+      }
+    },
+
+    created: function() {
+      Polymer.IronA11yAnnouncer.requestAvailability();
+    },
+
+    ready: function() {
+      this.async(function() {
+        this.hide();
+      });
+    },
+
+    /**
+     * Show the toast.
+     * @method show
+     */
+    show: function() {
+      if (PaperToast.currentToast) {
+        PaperToast.currentToast.hide();
+      }
+      PaperToast.currentToast = this;
+      this.removeAttribute('aria-hidden');
+      this._setVisible(true);
+      this.fire('iron-announce', {
+        text: this.text
+      });
+      this.debounce('hide', this.hide, this.duration);
+    },
+
+    /**
+     * Hide the toast
+     */
+    hide: function() {
+      this.setAttribute('aria-hidden', 'true');
+      this._setVisible(false);
+    },
+
+    /**
+     * Toggle the opened state of the toast.
+     * @method toggle
+     */
+    toggle: function() {
+      if (!this.visible) {
+        this.show();
+      } else {
+        this.hide();
+      }
+    },
+
+    _visibleChanged: function(visible) {
+      this.toggleClass('paper-toast-open', visible);
+    }
+  });
+
+  PaperToast.currentToast = null;
+
+})();
+
+;
+    Polymer({
+      is: 'paper-toggle-button',
+
+      behaviors: [
+        Polymer.PaperInkyFocusBehavior
+      ],
+
+      hostAttributes: {
+        role: 'button',
+        'aria-pressed': 'false',
+        tabindex: 0
+      },
+
+      properties: {
+        /**
+         * Fired when the checked state changes due to user interaction.
+         *
+         * @event change
+         */
+        /**
+         * Fired when the checked state changes.
+         *
+         * @event iron-change
+         */
+        /**
+         * Gets or sets the state, `true` is checked and `false` is unchecked.
+         *
+         * @attribute checked
+         * @type boolean
+         * @default false
+         */
+        checked: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          notify: true,
+          observer: '_checkedChanged'
+        },
+
+        /**
+         * If true, the button toggles the active state with each tap or press
+         * of the spacebar.
+         *
+         * @attribute toggles
+         * @type boolean
+         * @default true
+         */
+        toggles: {
+          type: Boolean,
+          value: true,
+          reflectToAttribute: true
+        }
+      },
+
+      listeners: {
+        track: '_ontrack'
+      },
+
+      ready: function() {
+        this._isReady = true;
+      },
+
+      // button-behavior hook
+      _buttonStateChanged: function() {
+        if (this.disabled) {
+          return;
+        }
+        if (this._isReady) {
+          this.checked = this.active;
+        }
+      },
+
+      _checkedChanged: function(checked) {
+        this.active = this.checked;
+        this.fire('iron-change');
+      },
+
+      _ontrack: function(event) {
+        var track = event.detail;
+        if (track.state === 'start') {
+          this._trackStart(track);
+        } else if (track.state === 'track') {
+          this._trackMove(track);
+        } else if (track.state === 'end') {
+          this._trackEnd(track);
+        }
+      },
+
+      _trackStart: function(track) {
+        this._width = this.$.toggleBar.offsetWidth / 2;
+        /*
+         * keep an track-only check state to keep the dragging behavior smooth
+         * while toggling activations
+         */
+        this._trackChecked = this.checked;
+        this.$.toggleButton.classList.add('dragging');
+      },
+
+      _trackMove: function(track) {
+        var dx = track.dx;
+        this._x = Math.min(this._width,
+            Math.max(0, this._trackChecked ? this._width + dx : dx));
+        this.translate3d(this._x + 'px', 0, 0, this.$.toggleButton);
+        this._userActivate(this._x > (this._width / 2));
+      },
+
+      _trackEnd: function(track) {
+        this.$.toggleButton.classList.remove('dragging');
+        this.transform('', this.$.toggleButton);
+      }
+
+    });
+  

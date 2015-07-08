@@ -47,7 +47,7 @@ var Dom = {
 	}
 };
 
-var Event = {
+var KaomojifierEvent = {
 	add: function() {
 		if(window.addEventListener){
 			return function(el, type, fn){
@@ -64,30 +64,30 @@ var Event = {
 	}()
 };
 
-Event.add(document, 'DOMContentLoaded', function(){
-  Event.add('btn_pass', 'click', setPassword);
-  Event.add('pwd_status', 'click', function(){
-    Dom.get('btn_pass').disabled=!this.checked;
+KaomojifierEvent.add(document, 'DOMContentLoaded', function(){
+  KaomojifierEvent.add('btn_pass', 'click', setPassword);
+  KaomojifierEvent.add('pwd_status', 'click', function(){
+    KmPrefPassword();
   });
-  Event.add('btn_advSettings', 'click', function(){
-    toogleList(null, 'adv_settings');
+  KaomojifierEvent.add('btn_advSettings', 'click', function(){
+    toggleList(null, 'adv_settings');
   });
-  Event.add('lst_bs', 'click', function(){
-    toogleList(Dom.get("lst_bs"), 'blocked_url');
+  KaomojifierEvent.add('lst_bs', 'click', function(){
+    toggleList(Dom.get("lst_bs"), 'blocked_url');
   });
-  Event.add('lst_bk', 'click', function(){
-    toogleList(Dom.get("lst_bk"), 'blocked_word');
+  KaomojifierEvent.add('lst_bk', 'click', function(){
+    toggleList(Dom.get("lst_bk"), 'blocked_word');
   });
-  Event.add('lst_ts', 'click', function(){
-    toogleList(Dom.get("lst_ts"), 'trusted_url');
+  KaomojifierEvent.add('lst_ts', 'click', function(){
+    toggleList(Dom.get("lst_ts"), 'trusted_url');
   });
-  Event.add('lst_pf', 'click', function(){
-    toogleList(Dom.get("lst_pf"), 'profanity_word');
+  KaomojifierEvent.add('lst_pf', 'click', function(){
+    toggleList(Dom.get("lst_pf"), 'profanity_word');
   });
-  Event.add('btn_generate', 'click', genList);
-  Event.add('btn_reset', 'click', reset_options);
-  Event.add('btn_save', 'click', save_options);
-	Event.add('add_cf', 'click', function(){
+  KaomojifierEvent.add('btn_generate', 'click', genList);
+  KaomojifierEvent.add('btn_reset', 'click', reset_options);
+  KaomojifierEvent.add('btn_save', 'click', save_options);
+	KaomojifierEvent.add('add_cf', 'click', function(){
 		var bu = Dom.get("bu").checked,
 		bw = Dom.get("bw").checked,
 		au = Dom.get("au").checked;
@@ -111,7 +111,7 @@ Event.add(document, 'DOMContentLoaded', function(){
 			populateList('trusted_url', keyword);
 		}else {return false;}
 	});
-	Event.add('add_pf', 'click', function(){
+	KaomojifierEvent.add('add_pf', 'click', function(){
 		var keyword = Dom.get("keyword_pf").value;
 		keyword = keyword.replace(/<(.|\n)+?>/g,'');
 		list_pf[list_pf.length] = keyword;
@@ -128,7 +128,7 @@ var populateList = function(list, keyword){
 	Dom.add(remove, el);
 	Dom.add(el, list);
 
-	Event.add(remove, 'click', function(e){
+	KaomojifierEvent.add(remove, 'click', function(e){
 		var span = this.parentNode;
 		var keyword = span.innerHTML.replace(/<(.*)?>/g,'');
 		switch(span.parentNode.id){
@@ -214,7 +214,7 @@ var save_options = function(){
 	};
 
 	//reference to background.html
-	var bg = chrome.extension.getBackgroundPage().tinyFilter_bg;
+	var bg = chrome.extension.getBackgroundPage().kaomojify_bg;
 
 	if(subscriptions.url.length > 0){
 		if(subscriptions.url != bg.prefs.subscriptions.url){
@@ -256,12 +256,6 @@ var save_options = function(){
 	bg.prefs.profanity_filter = profanity_filter;
 	bg.prefs.subscriptions = subscriptions;
 	bg.init();
-
-	var status = Dom.get("status");
-	status.removeAttribute("style");
-	setTimeout(function() {
-		status.setAttribute("style","visibility:hidden");
-	}, 750);
 };
 
 // Restores options
@@ -285,7 +279,9 @@ var restore_options = function(){
 	var gs = JSON.parse(localStorage.getItem('general_settings'));
 	password = gs.password.hash;
 	Dom.get("pwd_status").checked = (gs.password.hash.length>0) ? true : false;
-	Dom.get("btn_pass").disabled = !Dom.get("pwd_status").checked;
+	if (Dom.get("pwd_status").checked) {
+		$('#password_bool').slideDown(250);
+	};
 	
 	list_bs = cf.block.sites || [];
 	list_bw = cf.block.words || [];
@@ -316,7 +312,7 @@ var restore_options = function(){
 	};
 };
 
-var toogleList = function(e, id){
+var toggleList = function(e, id){
 	var el = Dom.get(id);
 	if(el.style.display == 'block'){
 		el.style.display = 'none';
@@ -345,7 +341,7 @@ var setPassword = function(){
 };
 
 var genList = function(){
-	var bg = chrome.extension.getBackgroundPage().tinyFilter_bg;
+	var bg = chrome.extension.getBackgroundPage().kaomojify_bg;
 	bg.generateSubscription();
 };
 
@@ -356,7 +352,7 @@ var reset_options = function(){
 		localStorage.removeItem('content_filter');
 		localStorage.removeItem('profanity_filter');
 		localStorage.removeItem('subscriptions');
-		chrome.extension.getBackgroundPage().tinyFilter_bg.init();
+		chrome.extension.getBackgroundPage().kaomojify_bg.init();
 		window.location.reload();
 	}
 }

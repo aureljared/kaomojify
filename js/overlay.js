@@ -8,4 +8,4 @@
     alse be found on the project page under the filename 'LICENSE.txt'.
 */
 
-tinyFilter.content_start();
+kaomojify.content_start();
