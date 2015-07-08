@@ -31,7 +31,7 @@ window.onload = function(){
 
 					$('#loginpage').fadeOut(250);
 					KmUiBackend.restoreOptions();
-		 			document.getElementById('version').innerHTML = '0.1 (0708-005)';
+		 			document.getElementById('version').innerHTML = '0.2 (0708-005)';
 		 			document.body.style.display = "block !important";
 		 			document.removeEventListener('contextmenu', rClHandler);
 				} else {
@@ -54,7 +54,7 @@ window.onload = function(){
 			}
 		});
 	} else {
-		document.getElementById('version').innerHTML = '0.1 (0708-005)';
+		document.getElementById('version').innerHTML = '0.2 (0708-005)';
 		KmUiBackend.restoreOptions();
  		document.body.style.display = "block !important";
 	}

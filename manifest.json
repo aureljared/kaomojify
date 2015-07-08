@@ -14,7 +14,7 @@
 	"name": "Kaomojify",
 	"description": "Replace bad words with kaomojis.",
 	"author": "Aurel Jared Dantis",
-	"version": "0.1",
+	"version": "0.2",
 	"icons": {
 		"16": "img/icon-16.png",
 		"48": "img/icon-48.png",
