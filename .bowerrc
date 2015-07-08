@@ -1,4 +1,4 @@
 {
-	"directory": "bower/",
+	"directory": ".bower/",
 	"analytics": false
 }

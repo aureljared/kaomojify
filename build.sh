@@ -47,7 +47,7 @@ echo "[*] Concatenating imports."
 for f in ${poly[@]}; do
 	echo "    => $f"
 	echo -n '<!-- ' >> js/..html && echo "$f -->" >> js/..html
-	echo "<link rel='import' href='../bower/$f'/>" >> js/..html
+	echo "<link rel='import' href='../.bower/$f'/>" >> js/..html
 done
 
 # Build
