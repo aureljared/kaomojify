@@ -21,15 +21,14 @@ window.onload = function(){
 			var enteredPw = $('#pwentry #input').val();
 			if (enteredPw != "" && enteredPw != null) {
 				if (Crypto.SHA256(enteredPw) == gs.password.hash) {
-					/*$('#pwfield #input').val(function(){
-						var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-						var text = "";
+					// Generate random placeholder password
+					var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+					var text = "";
+					for (var i = 0; i < enteredPw.length; i++) {
+					    text += possible.charAt(Math.floor(Math.random() * possible.length));
+					}
+					KmUiDom.get("newpw").value = text;
 
-					    for (var i = 0; i < enteredPw.length; i++)
-					        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-					    return text;
-					});*/
 					$('#loginpage').fadeOut(250);
 					KmUiBackend.restoreOptions();
 		 			document.getElementById('version').innerHTML = '0.1 (0708-005)';
