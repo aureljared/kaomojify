@@ -72,7 +72,7 @@ for f in ${js[@]}; do
 done
 echo "[*] Cleaning up."
 echo "</body></html>" >> "$ouh"
-rm -f .output.html "$ouh.tmp" js/..html
+rm -f .output.html "$ouh.tmp" js/..html options.html
 echo "[*] Copying files into distribution folder."
 for f in ${dist[@]}; do
 	echo "    ==> $f"

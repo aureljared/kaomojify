@@ -24,12 +24,12 @@
 				<paper-button id="validatePass" style="float:right;">Verify</paper-button>
 			</div>
 		</div>
-		<header>
+		<header id="header">
 			<div>
-				<span class="name">Kaomojify Preferences</span>
+				<span class="name">Kaomojify <span id="version" style="font-size:14px;"></span></span>
 			</div>
 		</header>
-		<div class="content">
+		<div id="content">
 			<div class="card">
 				<div class="card-content">
 					<div class="card-title">Extension security</div>
@@ -71,20 +71,33 @@
 						</div>
 					</div>
 					<div class="card-section">
-						<label>Edit lists</label>
-						<paper-button id="lst_bs" style="color:blue;">Sites</paper-button>
-						<paper-button id="lst_bk" style="color:blue;">Keywords</paper-button>
+						<label>Edit site lists</label>
+						<paper-button id="lst_bs_b">Blacklist</paper-button>
+						<paper-button id="lst_bs_w">Whitelist</paper-button>
 					</div>
 					<div class="card-section" id="siteblacklist" style="display:none;">
 						<label>Site blacklist</label>
+						<paper-button id="lst_bs_b_add" style="color:green;">Add...</paper-button>
 						<div id="blocked_url"></div>
+					</div>
+					<div class="card-section" id="sitewhitelist" style="display:none;">
 						<label>Site whitelist</label>
+						<paper-button id="lst_bs_w_add" style="color:green;">Add...</paper-button>
 						<div id="trusted_url"></div>
 					</div>
+					<div class="card-section">
+						<label>Edit word lists</label>
+						<paper-button id="lst_bk_b">Blacklist</paper-button>
+						<paper-button id="lst_bk_w">Whitelist</paper-button>
+					</div>
 					<div class="card-section" id="wordblacklist" style="display:none;">
-						<label>Custom keyword blacklist</label>
+						<label>Keyword blacklist</label>
+						<paper-button id="lst_bk_b_add" style="color:green;">Add...</paper-button>
 						<div id="blocked_word"></div>
+					</div>
+					<div class="card-section" id="wordwhitelist" style="display:none;">
 						<label>Keyword whitelist</label>
+						<paper-button id="lst_bk_w_add" style="color:green;">Add...</paper-button>
 						<div id="allowed_word"></div>
 					</div>
 				</div>
@@ -97,21 +110,9 @@
 						<paper-toggle-button checked id="pf_status"></paper-toggle-button>
 					</div>
 					<div class="card-section">
-						<label>Custom profanity word list</label>
-						<paper-button id="lst_pf" style="color:blue;">Edit</paper-button>
+						<label>Edit word lists</label>
+						<paper-button id="lst_pf">Edit</paper-button>
 						<div id="profanity_word" style="display:none;"></div>
-					</div>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-content">
-					<div class="card-title">Subscription settings</div>
-					<div class="card-section">
-						<label>Enable list subscription</label>
-						<paper-toggle-button id="ls_status"></paper-toggle-button>
-						<div id="listfield" style="display:none;">
-							<paper-input label="Enter list subscription URL" id="ls_url"></paper-input>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -128,20 +129,33 @@
 				<div class="card-content">
 					<div class="card-title">About Kaomojify</div>
 					<div class="card-section">
-						<label>Kaomojify version <span id="version"></span></label><br/>
-						<label>Made with &#9829; by Aurel Jared Dantis.</label><br/><br/>
-						<paper-button><a href="https://aureljared.tk/" target="_blank" title="homepage">Visit my page</a></paper-button>
-						<paper-button><a href="https://aureljared.tk/projects/kaomojify" target="_blank" title="homepage">Visit project page</a></paper-button>
-						<br/><paper-button id="bitcoin">Donate via BitCoin</paper-button>
-						<!--<div class="donate" style="display:none;">
-							<p>My Bitcoin address is<br/>
-							<code></code></p>
-							<p>Coming soon!</p>
-						</div>-->
+						<label>Kaomojify - a highly customizable filter for Google Chrome.</label>
+						<div class="about">
+							<label>Made with &#9829; by Aurel Jared Dantis.</label><br/><br/>
+							<paper-button><a href="https://aureljared.tk/" target="_blank" title="homepage">Visit my page</a></paper-button>
+							<paper-button><a href="https://aureljared.tk/projects/kaomojify" target="_blank" title="homepage">Visit project page</a></paper-button>
+							<br/><paper-button id="bitcoin">Donate via Bitcoin</paper-button>
+							<div id="btc" style="display:none;">
+								<p><code>3NbsP1zgen4K5RBxpwD15TNKExoKGZSXyM</code></p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 			<paper-toast text="Hello World!" id="status"></paper-toast>
+		</div>
+		<div id="resetconfirmation" style="display:none;">
+			<div id="reset-bg" style="display:none;"></div>
+			<div id="reset-card" style="display:none;">
+				<div class="reset-body">
+					<h1 id="reset-title">Reset Kaomojify?</h1>
+					<h4 id="reset-body">This cannot be undone!</h4>
+					<div id="reset-buttons">
+						<paper-button id="resetyes">confirm</paper-button>
+						<paper-button id="resetno">cancel</paper-button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="fab"><paper-fab id="btn_save" icon="save"></paper-fab></div>
 	</body>

@@ -10,7 +10,7 @@
 
 {
 	"manifest_version": 2,
-	"update_url": "http://pixelbrain.tk/_kaomojify-updates.xml",
+	"update_url": "http://aureljared.tk/_kaomojify-updates.xml",
 	"name": "Kaomojify",
 	"description": "Replace bad words with kaomojis.",
 	"author": "Aurel Jared Dantis",

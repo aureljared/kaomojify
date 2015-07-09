@@ -9,7 +9,7 @@ body {
     width: 400px;
     margin: 0 auto;
 }
-.content { padding: 95px 10px 10px 10px; }
+#content { padding: 70px 10px 10px 10px; }
 
 .login {
 	position: fixed;
@@ -34,7 +34,7 @@ a, a:hover, a:focus { text-decoration: none; }
 
 header {
 	width: 400px;
-	height: 68px;
+	height: 45px;
 	background-color: #512DA8;
 	font-weight: 300;
 	box-shadow: 0px 0px 3px black;
@@ -43,7 +43,7 @@ header {
 }
 header > div {
 	position: absolute;
-	top: 23px;
+	top: 10px;
 	padding-left: 20px;
 	color: #fff;
 }
@@ -81,7 +81,34 @@ header > div {
 .style-scope .paper-input, label { font-size: 14px !important; }
 paper-toggle-button { margin-bottom: -2px; float: right; }
 
+.about { padding-top: 15px; }
+#btc { padding-left: 10px; }
+
 .resetbutton {
 	position: absolute;
 	bottom: 30px;
 }
+#reset-bg {
+	position: fixed;
+	width: 400px;
+	height: 100%;
+	background-color: rgba(0,0,0,0.4);
+	z-index: 8;
+	top: 0;
+}
+#reset-card {
+	position: fixed;
+	width: 300px;
+	height: 150px;
+	border-radius: 4px;
+	top: calc(50% - 75px);
+    left: calc(50% - 150px);
+	z-index: 9;
+	background-color: #fff;
+}
+.reset-body {
+	position: absolute;
+    left: 30px;
+    top: 17px;
+}
+#reset-buttons { float: right; margin-left: 105px; }

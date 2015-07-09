@@ -12,6 +12,7 @@
 
 window.onload = function(){
 	var gs = JSON.parse(localStorage.getItem('general_settings'));
+	var versionString = KmUiBackend.engine.version + ' build ' +  KmUiBackend.engine.build;
 	if (gs.password.hash.length > 0) {
 		var rClHandler = function(e){e.preventDefault();};
 		document.addEventListener('contextmenu', rClHandler);
@@ -31,7 +32,7 @@ window.onload = function(){
 
 					$('#loginpage').fadeOut(250);
 					KmUiBackend.restoreOptions();
-		 			document.getElementById('version').innerHTML = '0.2 (0708-005)';
+		 			document.getElementById('version').innerHTML = versionString;
 		 			document.body.style.display = "block !important";
 		 			document.removeEventListener('contextmenu', rClHandler);
 				} else {
@@ -54,7 +55,7 @@ window.onload = function(){
 			}
 		});
 	} else {
-		document.getElementById('version').innerHTML = '0.2 (0708-005)';
+		document.getElementById('version').innerHTML = versionString;
 		KmUiBackend.restoreOptions();
  		document.body.style.display = "block !important";
 	}
@@ -87,8 +88,8 @@ var KmUiPref = {
 	populateList: function(list,keyword){
 		var el = document.createElement('p');
 		var remove = document.createElement('span');
-		remove.setAttribute('class', 'link');
-		remove.innerHTML = '[x]';
+		remove.setAttribute('class', 'listsplice');
+		remove.innerHTML = '<paper-button style="color:red;">remove</paper-button>';
 		el.innerHTML = keyword;
 		KmUiDom.add(remove, el);
 		KmUiDom.add(el, list);
@@ -98,19 +99,19 @@ var KmUiPref = {
 			var keyword = span.innerHTML.replace(/<(.*)?>/g,'');
 			switch(span.parentNode.id){
 				case "blocked_url":
-					removeKeyword(list_bs, keyword);
+					KmUiPref.removeKeyword(list_bs, keyword);
 					break;
 				
 				case "blocked_word":
-					removeKeyword(list_bw, keyword);
+					KmUiPref.removeKeyword(list_bw, keyword);
 					break;
 				
 				case "trusted_url":
-					removeKeyword(list_ts, keyword);
+					KmUiPref.removeKeyword(list_ts, keyword);
 					break;
 				
 				case "profanity_word":
-					removeKeyword(list_pf, keyword);
+					KmUiPref.removeKeyword(list_pf, keyword);
 					break;
 				
 				default:
@@ -118,6 +119,13 @@ var KmUiPref = {
 			}
 			KmUiDom.remove(span);
 		});
+	},
+	removeKeyword: function(list,word) {
+		var len = list.length;
+		while (len--) {
+			if(list[len] == word)
+				list.splice(len,1);
+		}
 	}
 };
 
@@ -133,10 +141,6 @@ var KmUiBackend = {
 		
 		var pf = JSON.parse(localStorage.getItem('profanity_filter'));
 		KmUiDom.get("pf_status").checked = pf.enabled || false;
-		
-		var ls = JSON.parse(localStorage.getItem('subscriptions'));
-		KmUiDom.get("ls_status").checked = ls.enabled || false;
-		$('#ls_url #input').val(ls.url || "");
 		
 		var gs = JSON.parse(localStorage.getItem('general_settings'));
 		password = gs.password.hash;
@@ -161,15 +165,40 @@ var KmUiBackend = {
 		};
 	},
 	resetOptions: function(){
-		var x = window.confirm("Are you sure you want to reset the settings?");
-		if(x){
+		$('#resetconfirmation').fadeIn(250);
+		$('#reset-bg').fadeIn(250);
+		$('#reset-card').fadeIn(250);
+		KmUiEvent.click('resetyes', function(){
+			$('#reset-buttons').fadeOut({
+				duration: 100,
+				start: function(){
+					$('#header').fadeOut(100);
+					$('#content').fadeOut(100);
+				}
+			});
+			document.getElementById('reset-title').innerHTML = 'Resetting Kaomojify'
+			document.getElementById('reset-body').innerHTML = 'Please wait...'
 			localStorage.removeItem('general_settings');
 			localStorage.removeItem('content_filter');
 			localStorage.removeItem('profanity_filter');
 			localStorage.removeItem('subscriptions');
-			chrome.extension.getBackgroundPage().kaomojify_bg.init();
-			window.location.reload();
-		}
+			setTimeout(function(){
+				$('#reset-card').fadeOut(250);
+				$('#reset-bg').fadeOut(250);
+				$('#resetconfirmation').fadeOut({
+					duration: 250,
+					complete: function(){setTimeout(function(){
+						chrome.extension.getBackgroundPage().KmBackground.init();
+						window.location.reload();
+					},1);}
+				});
+			}, 1000);
+		});
+		KmUiEvent.click('resetno', function(){
+			$('#reset-card').fadeOut(250);
+			$('#reset-bg').fadeOut(250);
+			$('#resetconfirmation').fadeOut(250);
+		});
 	},
 	saveOptions: function(){
 		var content_filter = {
@@ -201,42 +230,8 @@ var KmUiBackend = {
 			words : list_pf
 		};
 
-		var subscriptions = {
-			enabled : KmUiDom.get("ls_status").checked,
-			url : KmUiDom.get("ls_url").value,
-			content_filter : {
-				block : {},
-				trust : {}
-			},
-			profanity_filter : {}
-		};
-
 		//reference to background.html
-		var bg = chrome.extension.getBackgroundPage().kaomojify_bg;
-
-		if(subscriptions.url.length > 0){
-			if(subscriptions.url != bg.prefs.subscriptions.url){
-				var response = bg.loadSubscription(subscriptions.url);
-				if(response){
-					subscriptions.content_filter.block.sites = (response.content_filter.block.sites) ? response.content_filter.block.sites : [];
-					subscriptions.content_filter.block.words = (response.content_filter.block.words) ? response.content_filter.block.words : [];
-					subscriptions.content_filter.trust.sites = (response.content_filter.trust.sites) ? response.content_filter.trust.sites : [];
-					subscriptions.profanity_filter.words = (response.profanity_filter.words) ? response.profanity_filter.words : [];
-					subscriptions.last_update = new Date().getTime();
-					//alert(subscriptions.last_update);
-				}else{
-					subscriptions.enabled = false;
-				}
-			}else{
-				subscriptions.content_filter.block.sites = bg.prefs.subscriptions.content_filter.block.sites;
-				subscriptions.content_filter.block.words = bg.prefs.subscriptions.content_filter.block.words;
-				subscriptions.content_filter.trust.sites = bg.prefs.subscriptions.content_filter.trust.sites;
-				subscriptions.profanity_filter.words = bg.prefs.subscriptions.profanity_filter.words;
-				subscriptions.last_update = (bg.prefs.subscriptions.last_update) ? bg.prefs.subscriptions.last_update : new Date().getTime();
-			}
-		}else{
-			subscriptions.enabled = false;
-		}
+		var bg = chrome.extension.getBackgroundPage().KmBackground;
 
 		var general_settings = {
 			password : {
@@ -246,7 +241,6 @@ var KmUiBackend = {
 		
 		localStorage.setItem('content_filter', JSON.stringify(content_filter));
 		localStorage.setItem('profanity_filter', JSON.stringify(profanity_filter));
-		localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
 		localStorage.setItem('general_settings', JSON.stringify(general_settings));
 		
 		KmUiEvent.toast('Preferences saved.');
@@ -254,7 +248,6 @@ var KmUiBackend = {
 		//update background.html settings
 		bg.prefs.content_filter = content_filter;
 		bg.prefs.profanity_filter = profanity_filter;
-		bg.prefs.subscriptions = subscriptions;
 		bg.init();
 	},
 	setPassword: function(){
@@ -262,6 +255,10 @@ var KmUiBackend = {
 		password = Crypto.SHA256(pwPlaintext);
 		KmUiEvent.toast('Password successfully set.');
 		KmUiBackend.saveOptions();
+	},
+	engine: {
+		"version": "0.2",
+		"build": "070915"
 	}
 };
 
@@ -289,12 +286,13 @@ KmUiEvent.add(document, 'DOMContentLoaded', function(){
 	KmUiEvent.click('pwd_status', function(){KmUiDom.toggle('#pwfield');});
 	KmUiEvent.click('adv_reason', function(){KmUiDom.toggle('#reasonfield');});
 	KmUiEvent.click('adv_redirect', function(){KmUiDom.toggle('#redirfield');});
-	KmUiEvent.click('lst_bs', function(){KmUiDom.toggle('#siteblacklist');});
-	KmUiEvent.click('lst_bk', function(){KmUiDom.toggle('#wordblacklist');});
+	KmUiEvent.click('lst_bs_b', function(){KmUiDom.toggle('#siteblacklist');});
+	KmUiEvent.click('lst_bs_w', function(){KmUiDom.toggle('#sitewhitelist');});
+	KmUiEvent.click('lst_bk_b', function(){KmUiDom.toggle('#wordblacklist');});
+	KmUiEvent.click('lst_bk_w', function(){KmUiDom.toggle('#wordwhitelist');});
 	KmUiEvent.click('lst_pf', function(){KmUiDom.toggle('#profanity_word');});
-	KmUiEvent.click('ls_status', function(){KmUiDom.toggle('#listfield');});
 	KmUiEvent.click('btn_reset', function(){KmUiBackend.resetOptions();});
 	KmUiEvent.click('setpass', function(){KmUiBackend.setPassword();});
 	KmUiEvent.click('btn_save', function(){KmUiBackend.saveOptions();});
-	KmUiEvent.click('bitcoin', function(){KmUiEvent.toast('Coming soon!');});
+	KmUiEvent.click('bitcoin', function(){KmUiDom.toggle('#btc');});
 });

@@ -8,7 +8,7 @@
     alse be found on the project page under the filename 'LICENSE.txt'.
 */
 
-var kaomojify_bg = {
+var KmBackground = {
 	prefs : {
 		content_filter : (function(){
 			return (localStorage.getItem("content_filter")) ? JSON.parse(localStorage.getItem("content_filter")) : [];
@@ -181,15 +181,6 @@ var kaomojify_bg = {
 			this.prefs.profanity_filter = profanity_filter;
 		}
 
-		if(localStorage.getItem('subscriptions') == null){
-			var subscriptions = {
-				enabled : false,
-				url : ""
-			};
-			localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
-			this.prefs.subscriptions = subscriptions;
-		}
-
 		if(localStorage.getItem('general_settings') == null){
 			var general_settings = {
 				password : {
@@ -228,38 +219,13 @@ var kaomojify_bg = {
 	}
 };
 
-(function(){
-	// Update Subscription
-	
-	var tf_subs = kaomojify_bg.prefs.subscriptions;
-	if(!tf_subs){
-		return;
-	}
-	
-	var three_days = 259200000;
-	var time_since_last_update = new Date().getTime() - tf_subs.last_update;
-	
-	if(tf_subs.enabled && time_since_last_update > three_days){
-		var response = kaomojify_bg.loadSubscription(kaomojify_bg.prefs.subscriptions.url);
-		if(response){
-			kaomojify_bg.prefs.subscriptions.content_filter.block.sites = (response.content_filter.block.sites) ? response.content_filter.block.sites : [];
-			kaomojify_bg.prefs.subscriptions.content_filter.block.words = (response.content_filter.block.words) ? response.content_filter.block.words : [];
-			kaomojify_bg.prefs.subscriptions.content_filter.trust.sites = (response.content_filter.trust.sites) ? response.content_filter.trust.sites : [];
-			kaomojify_bg.prefs.subscriptions.profanity_filter.words = (response.profanity_filter.words) ? response.profanity_filter.words : [];
-			kaomojify_bg.prefs.subscriptions.last_update = new Date().getTime();
-			localStorage.setItem('subscriptions', JSON.stringify(kaomojify_bg.prefs.subscriptions));
-			//alert("subscription list updated");
-		}
-	}
-})();
-
-kaomojify_bg.init();
+KmBackground.init();
 
 chrome.extension.onRequest.addListener(
 	function(request, sender, sendResponse){
 		switch (request.name){
 			case "getPreferences":
-				sendResponse(kaomojify_bg.prefs);
+				sendResponse(KmBackground.prefs);
 				break;
 
 			case "redirectPage":
@@ -273,7 +239,7 @@ chrome.extension.onRequest.addListener(
 );
 
 function loadURI(tab){
-	var tabUrl = kaomojify_bg.prefs.content_filter.advanced.redirect;
+	var tabUrl = KmBackground.prefs.content_filter.advanced.redirect;
 	chrome.tabs.update(tab.id, {url: tabUrl});
 }
 var popup = {
@@ -304,7 +270,7 @@ var popup = {
 					return 0;
 				}
 			}
-			var content_filter=kaomojify_bg.prefs.content_filter;
+			var content_filter=KmBackground.prefs.content_filter;
 			if(action === 0){
 				content_filter.block.sites[content_filter.block.sites.length]=domain;
 			}else if(action === 1){
