@@ -444,9 +444,9 @@ kaomojify.profanity_content_scan = function(list){
 		"​( ͡° ᴥ ͡°)​​"
 	];
 	function F(n, t){
-		if (that.detection)
-			return;
-		else {
+		/* if (that.detection)
+			return; */
+
 			if(n.nodeType === 3 || t === "TITLE"){
 				if(t!=="TITLE"){
 					var u = that.searchHash2(n.data.toLowerCase(), list);
@@ -464,7 +464,6 @@ kaomojify.profanity_content_scan = function(list){
 		    } else if (n.tagName != "STYLE" && n.tagName != "SCRIPT") {
 				var i=n.childNodes, l=i.length; while(l--){F(i[l], t);}
 			}
-		}
 	}
 	F(that.doc.title, "TITLE");
 	F(that.doc.body, "BODY");
