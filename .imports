@@ -11,6 +11,18 @@ poly=(
 # External scripts
 js=(
 	js/crypto.min.js
-	js/material.options.js
+	js/options.js
 	js/jquery.min.js
+)
+# For minification
+minq=(
+	.bower/paper-toggle-button/paper-toggle-button.css
+	css/style.css
+	js/options.js
+	js/background.js
+	js/content.js
+	js/overlay.js
+	js/popup.js
+	js/site.js
+	js/polymer.js
 )

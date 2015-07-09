@@ -26,7 +26,7 @@
 		</div>
 		<header id="header">
 			<div>
-				<span class="name">Kaomojify <span id="version" style="font-size:14px;"></span></span>
+				<span class="name">Kaomojify <span class="auth" id="version"></span></span>
 			</div>
 		</header>
 		<div id="content">
@@ -67,38 +67,31 @@
 						<label>Redirect blocked pages</label>
 						<paper-toggle-button id="adv_redirect"></paper-toggle-button>
 						<div id="redirfield" style="display:none;">
-							<paper-input label="Redirect to..."></paper-input>
+							<paper-input id="val_redirect" label="Redirect to..."></paper-input>
 						</div>
 					</div>
 					<div class="card-section">
-						<label>Edit site lists</label>
-						<paper-button id="lst_bs_b">Blacklist</paper-button>
-						<paper-button id="lst_bs_w">Whitelist</paper-button>
+						<label>Edit filter lists</label><br/>
+						<div style="padding-top:10px;">
+							<paper-button id="lst_bs">Blocked Sites</paper-button>
+							<paper-button id="lst_ts">Trusted Sites</paper-button>
+							<paper-button id="lst_bk">Keywords</paper-button>
+						</div>
 					</div>
 					<div class="card-section" id="siteblacklist" style="display:none;">
-						<label>Site blacklist</label>
-						<paper-button id="lst_bs_b_add" style="color:green;">Add...</paper-button>
+						<label>Blocked sites</label>
+						<paper-button id="addbtn" keyword-type="site" target-list="list_bs" style="color:green;">Add...</paper-button>
 						<div id="blocked_url"></div>
 					</div>
 					<div class="card-section" id="sitewhitelist" style="display:none;">
-						<label>Site whitelist</label>
-						<paper-button id="lst_bs_w_add" style="color:green;">Add...</paper-button>
+						<label>Trusted sites</label>
+						<paper-button id="addbtn" keyword-type="site" target-list="list_ts" style="color:green;">Add...</paper-button>
 						<div id="trusted_url"></div>
 					</div>
-					<div class="card-section">
-						<label>Edit word lists</label>
-						<paper-button id="lst_bk_b">Blacklist</paper-button>
-						<paper-button id="lst_bk_w">Whitelist</paper-button>
-					</div>
 					<div class="card-section" id="wordblacklist" style="display:none;">
-						<label>Keyword blacklist</label>
-						<paper-button id="lst_bk_b_add" style="color:green;">Add...</paper-button>
+						<label>Blocked keywords</label>
+						<paper-button id="addbtn" keyword-type="word" target-list="list_bw" style="color:green;">Add...</paper-button>
 						<div id="blocked_word"></div>
-					</div>
-					<div class="card-section" id="wordwhitelist" style="display:none;">
-						<label>Keyword whitelist</label>
-						<paper-button id="lst_bk_w_add" style="color:green;">Add...</paper-button>
-						<div id="allowed_word"></div>
 					</div>
 				</div>
 			</div>
@@ -107,12 +100,13 @@
 					<div class="card-title">Profanity filter settings</div>
 					<div class="card-section">
 						<label>Enable profanity filter</label>
-						<paper-toggle-button checked id="pf_status"></paper-toggle-button>
+						<paper-button id="lst_pf">Edit list</paper-button>
+						<paper-toggle-button checked id="pf_status" style="margin-top: 6px;"></paper-toggle-button>
 					</div>
-					<div class="card-section">
-						<label>Edit word lists</label>
-						<paper-button id="lst_pf">Edit</paper-button>
-						<div id="profanity_word" style="display:none;"></div>
+					<div id="profanitylist" class="card-section" style="display:none;">
+						<label>Profanity list</label>
+						<paper-button id="addbtn" keyword-type="word" target-list="list_pf" style="color:green;">Add...</paper-button>
+						<div id="profanity_word"></div>
 					</div>
 				</div>
 			</div>
@@ -144,20 +138,19 @@
 			</div>
 			<paper-toast text="Hello World!" id="status"></paper-toast>
 		</div>
-		<div id="resetconfirmation" style="display:none;">
-			<div id="reset-bg" style="display:none;"></div>
-			<div id="reset-card" style="display:none;">
-				<div class="reset-body">
-					<h1 id="reset-title">Reset Kaomojify?</h1>
-					<h4 id="reset-body">This cannot be undone!</h4>
-					<div id="reset-buttons">
-						<paper-button id="resetyes">confirm</paper-button>
-						<paper-button id="resetno">cancel</paper-button>
+		<div id="dialog-ui" style="display:none;">
+			<div id="dialog-bg" style="display:none;"></div>
+			<div id="dialog" style="display:none;">
+				<div class="dialog-body">
+					<h1 id="dialog-title"></h1>
+					<div id="dialog-body"></div>
+					<div id="dialog-buttons">
+						<paper-button id="dialog-yes"></paper-button>
+						<paper-button id="dialog-no">cancel</paper-button>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="fab"><paper-fab id="btn_save" icon="save"></paper-fab></div>
+		<div id="fab"><paper-fab id="btn_save" icon="save"></paper-fab></div>
 	</body>
 </html>
-

@@ -64,7 +64,7 @@ window.onload = function(){
 // Global vars
 var password = null;
 
-// Control UI
+// UI/DOM manipulators
 var KmUiDom = {
 	get: function(el) {
 		if(typeof el === 'string'){
@@ -89,7 +89,7 @@ var KmUiPref = {
 		var el = document.createElement('p');
 		var remove = document.createElement('span');
 		remove.setAttribute('class', 'listsplice');
-		remove.innerHTML = '<paper-button style="color:red;">remove</paper-button>';
+		remove.innerHTML = 'remove';
 		el.innerHTML = keyword;
 		KmUiDom.add(remove, el);
 		KmUiDom.add(el, list);
@@ -101,24 +101,52 @@ var KmUiPref = {
 				case "blocked_url":
 					KmUiPref.removeKeyword(list_bs, keyword);
 					break;
-				
 				case "blocked_word":
 					KmUiPref.removeKeyword(list_bw, keyword);
 					break;
-				
 				case "trusted_url":
 					KmUiPref.removeKeyword(list_ts, keyword);
 					break;
-				
 				case "profanity_word":
 					KmUiPref.removeKeyword(list_pf, keyword);
 					break;
-				
 				default:
 					break;
 			}
 			KmUiDom.remove(span);
 		});
+	},
+	addKeyword: function(list,kwtype) {
+		var targetDiv;
+		if (list == "list_bs")
+			targetDiv = 'blocked_url';
+		else if (list == "list_ts")
+			targetDiv = 'trusted_url';
+		else if (list == "list_bw")
+			targetDiv = 'blocked_word';
+		else
+			targetDiv = 'profanity_word';
+
+		var addToList = function() {
+			var targetList = window[list];
+			var keyword = $('#keyword_cf #input').val();
+			if (keyword.length > 0) {
+				keyword = keyword.replace(/<(.|\n)+?>/g,'');
+				targetList[targetList.length] = keyword;			
+				KmUiPref.populateList(targetDiv, keyword);
+			}
+			KmUiEvent.closeDialog(null);
+		};
+
+		KmUiEvent.openDialog('Add '+kwtype, (function(){
+			var inputDiv = document.createElement('div');
+			inputDiv.className = 'keywordform';
+			var inputForm = document.createElement('paper-input');
+			inputForm.setAttribute('id', 'keyword_cf');
+			inputForm.setAttribute('label', 'What should we add?');
+			inputDiv.appendChild(inputForm);
+			return inputDiv;
+		})(), function(){return}, addToList, 'add');
 	},
 	removeKeyword: function(list,word) {
 		var len = list.length;
@@ -137,7 +165,11 @@ var KmUiBackend = {
 		KmUiDom.get("adv_stop").checked = cf.advanced.stop_all || false;
 	 	KmUiDom.get("adv_reason").checked = cf.advanced.reason || false;
 	 	KmUiDom.get("adv_warning").value = cf.advanced.warning;
-	 	KmUiDom.get("adv_redirect").value = cf.advanced.redirect;
+	 	KmUiDom.get("adv_redirect").checked = cf.advanced.redirectstatus || false;
+	 	if (KmUiDom.get("adv_redirect").checked) {
+	 		$('#redirfield').slideDown(250);
+	 	}
+	 	KmUiDom.get("val_redirect").value = cf.advanced.redirect;
 		
 		var pf = JSON.parse(localStorage.getItem('profanity_filter'));
 		KmUiDom.get("pf_status").checked = pf.enabled || false;
@@ -165,40 +197,29 @@ var KmUiBackend = {
 		};
 	},
 	resetOptions: function(){
-		$('#resetconfirmation').fadeIn(250);
-		$('#reset-bg').fadeIn(250);
-		$('#reset-card').fadeIn(250);
-		KmUiEvent.click('resetyes', function(){
-			$('#reset-buttons').fadeOut({
+		KmUiEvent.openDialog('Reset Kaomojify?', '<h4>This cannot be undone!</h4>', function(){
+			// do nothing
+		}, function(){
+			$('#dialog-buttons').fadeOut({
 				duration: 100,
 				start: function(){
 					$('#header').fadeOut(100);
+					$('#fab').fadeOut(100);
 					$('#content').fadeOut(100);
 				}
 			});
-			document.getElementById('reset-title').innerHTML = 'Resetting Kaomojify'
-			document.getElementById('reset-body').innerHTML = 'Please wait...'
+			KmUiDom.get('dialog-title').innerHTML = 'Resetting Kaomojify'
+			KmUiDom.get('dialog-body').innerHTML = 'Please wait...'
 			localStorage.removeItem('general_settings');
 			localStorage.removeItem('content_filter');
 			localStorage.removeItem('profanity_filter');
-			localStorage.removeItem('subscriptions');
 			setTimeout(function(){
-				$('#reset-card').fadeOut(250);
-				$('#reset-bg').fadeOut(250);
-				$('#resetconfirmation').fadeOut({
-					duration: 250,
-					complete: function(){setTimeout(function(){
-						chrome.extension.getBackgroundPage().KmBackground.init();
-						window.location.reload();
-					},1);}
-				});
+				KmUiEvent.closeDialog(function(){setTimeout(function(){
+					chrome.extension.getBackgroundPage().KmBackground.init();
+					window.location.reload();
+				},1);});
 			}, 1000);
-		});
-		KmUiEvent.click('resetno', function(){
-			$('#reset-card').fadeOut(250);
-			$('#reset-bg').fadeOut(250);
-			$('#resetconfirmation').fadeOut(250);
-		});
+		}, 'confirm');
 	},
 	saveOptions: function(){
 		var content_filter = {
@@ -207,8 +228,9 @@ var KmUiBackend = {
 				warning : KmUiDom.get("adv_warning").value || "This page is unavailable due to policy restrictions.",
 				stop_all : KmUiDom.get("adv_stop").checked,
 				reason : KmUiDom.get("adv_reason").checked,
+				redirectstatus : KmUiDom.get("adv_redirect").checked,
 				redirect : (function(){
-					var adv_redirect = KmUiDom.get("adv_redirect").value || "",
+					var adv_redirect = $('#val_redirect #input').val() || "",
 							regex = /^(https?|ftp|file):\/\/.+$/i;
 					if(adv_redirect.length > 0 && !regex.test(adv_redirect)){
 						adv_redirect = "http://" + adv_redirect;
@@ -280,19 +302,48 @@ var KmUiEvent = {
 	toast: function(message){
 		$('#status').attr('text', message);
 		document.querySelector('#status').show();
+	},
+	openDialog: function(title,body,complete,positive,confirm){
+		KmUiDom.get('dialog-yes').innerHTML = confirm;
+		KmUiEvent.click('dialog-yes', positive);
+		KmUiEvent.click('dialog-no', KmUiEvent.closeDialog);
+		$('#dialog-ui').fadeIn(250);
+		$('#dialog-bg').fadeIn(250);
+		$('#dialog').fadeIn(250);
+		KmUiDom.get('dialog-title').innerHTML = title;
+		if (typeof(body) == "object") {
+			KmUiDom.get('dialog-body').innerHTML = '';
+			KmUiDom.get('dialog-body').appendChild(body);
+		}
+		else
+			KmUiDom.get('dialog-body').innerHTML = body;
+		
+		if (complete == null)
+			return true;
+		else
+			complete();
+	},
+	closeDialog: function(action){
+		$('#dialog').fadeOut(250);
+		$('#dialog-bg').fadeOut(250);
+		$('#dialog-ui').fadeOut(250);
+		if (action == null)
+			return true;
+		else
+			action();
 	}
 };
 KmUiEvent.add(document, 'DOMContentLoaded', function(){
 	KmUiEvent.click('pwd_status', function(){KmUiDom.toggle('#pwfield');});
 	KmUiEvent.click('adv_reason', function(){KmUiDom.toggle('#reasonfield');});
-	KmUiEvent.click('adv_redirect', function(){KmUiDom.toggle('#redirfield');});
-	KmUiEvent.click('lst_bs_b', function(){KmUiDom.toggle('#siteblacklist');});
-	KmUiEvent.click('lst_bs_w', function(){KmUiDom.toggle('#sitewhitelist');});
-	KmUiEvent.click('lst_bk_b', function(){KmUiDom.toggle('#wordblacklist');});
-	KmUiEvent.click('lst_bk_w', function(){KmUiDom.toggle('#wordwhitelist');});
-	KmUiEvent.click('lst_pf', function(){KmUiDom.toggle('#profanity_word');});
+	KmUiEvent.click('adv_redirect', function(){KmUiDom.toggle('#val_redirect');});
+	KmUiEvent.click('lst_bs', function(){KmUiDom.toggle('#siteblacklist');});
+	KmUiEvent.click('lst_ts', function(){KmUiDom.toggle('#sitewhitelist');});
+	KmUiEvent.click('lst_bk', function(){KmUiDom.toggle('#wordblacklist');});
+	KmUiEvent.click('lst_pf', function(){KmUiDom.toggle('#profanitylist');});
 	KmUiEvent.click('btn_reset', function(){KmUiBackend.resetOptions();});
 	KmUiEvent.click('setpass', function(){KmUiBackend.setPassword();});
 	KmUiEvent.click('btn_save', function(){KmUiBackend.saveOptions();});
 	KmUiEvent.click('bitcoin', function(){KmUiDom.toggle('#btc');});
+	$('paper-button#addbtn').click(function(){KmUiPref.addKeyword($(this).attr('target-list'), $(this).attr('keyword-type'));});
 });

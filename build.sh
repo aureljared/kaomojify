@@ -63,22 +63,32 @@ done
 # Build
 if [[ -e "$ouh" ]]; then rm -f "$ouh"; fi
 echo "[*] Vulcanizing and stripping inline scripts into \"js/polymer-project.js\"."
-$vul --inline-scripts .output.html | $csp --html "$ouh.tmp" --js js/polymer-project.js
+$vul --inline-scripts .output.html | $csp --html "$ouh.tmp" --js js/polymer.js
 echo "[*] Importing external scripts."
 cat "$ouh.tmp" | sed 's/<\/body><\/html>//' > "$ouh"
 for f in ${js[@]}; do
 	echo "    ==> $f"
 	echo "<script type='text/javascript' src='$f'></script>" >> "$ouh"
 done
-echo "[*] Cleaning up."
-echo "</body></html>" >> "$ouh"
-rm -f .output.html "$ouh.tmp" js/..html options.html
 echo "[*] Copying files into distribution folder."
+mkdir -p dist/.bower/paper-toggle-button
 for f in ${dist[@]}; do
 	echo "    ==> $f"
 	cp -fpr "$f" dist/
 done
-echo -e "\nComplete. File sizes are as follows:"
-echo "    $ouh: `du -k $ouh | cut -f 1` kilobytes"
-echo "    js/polymer-project.js: `du -k js/polymer-project.js | cut -f 1` kilobytes"
+echo "    ==> .bower/paper-toggle-button/paper-toggle-button.css"
+cp -fp .bower/paper-toggle-button/paper-toggle-button.css dist/.bower/paper-toggle-button/
+echo "[*] Minifying."
+cd dist
+for f in ${minq[@]}; do
+	echo "    ==> $f"
+	minify "$f" > .minified
+	rm -f "$f"
+	mv .minified "$f"
+done
+cd ../
+echo "[*] Cleaning up."
+echo "</body></html>" >> "$ouh"
+rm -f .output.html "$ouh.tmp" js/..html dist/js/..html
+echo -e "\nComplete. Total unpacked extension size is approx. `du -k -s dist | cut -f 1` kilobytes"
 exit 1
