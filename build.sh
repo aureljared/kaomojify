@@ -5,6 +5,16 @@ function showHelp() {
 	echo "This script requires the vulcanize and the crisper utilities."
 	echo "Install them by \"sudo npm install -g vulcanize crisper\"."
 }
+dist=(
+	css
+	js
+	img
+	options.html
+	popup.html
+	manifest.json
+	default.txt
+	LICENSE.txt
+)
 clear && printf '\e[3J'
 inh="$1"
 ouh="$ouh"
@@ -62,7 +72,12 @@ for f in ${js[@]}; do
 done
 echo "[*] Cleaning up."
 echo "</body></html>" >> "$ouh"
-rm -f .output.html "$ouh.tmp"
+rm -f .output.html "$ouh.tmp" js/..html
+echo "[*] Copying files into distribution folder."
+for f in ${dist[@]}; do
+	echo "    ==> $f"
+	cp -fpr "$f" dist/
+done
 echo -e "\nComplete. File sizes are as follows:"
 echo "    $ouh: `du -k $ouh | cut -f 1` kilobytes"
 echo "    js/polymer-project.js: `du -k js/polymer-project.js | cut -f 1` kilobytes"

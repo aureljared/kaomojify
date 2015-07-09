@@ -12,5 +12,5 @@ poly=(
 js=(
 	js/crypto.min.js
 	js/material.options.js
-	.bower/jquery/dist/jquery.min.js
+	js/jquery.min.js
 )

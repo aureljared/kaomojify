@@ -10,11 +10,13 @@
 
 {
 	"manifest_version": 2,
-	// "update_url": "http://clients2.google.com/service/update2/crx",
+	"update_url": "http://pixelbrain.tk/_kaomojify-updates.xml",
 	"name": "Kaomojify",
 	"description": "Replace bad words with kaomojis.",
 	"author": "Aurel Jared Dantis",
+	"homepage_url": "https://aureljared.tk/projects/kaomojify",
 	"version": "0.2",
+	"key": "cfleahjcfkkaepjioinbmfahoplgcmfd",
 	"icons": {
 		"16": "img/icon-16.png",
 		"48": "img/icon-48.png",
@@ -32,6 +34,7 @@
 		"scripts" : ["js/background.js", "js/crypto.min.js"],
 		"persistent" : true
 	},
+	"options_page": "options.html",
 	"options_ui": {
 		"chrome_style": true,
 		"page": "options.html"
