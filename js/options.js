@@ -8,8 +8,6 @@
     alse be found on the project page under the filename 'LICENSE.txt'.
 */
 
-// TODO: Use this in place of old 'options.js'
-
 window.onload = function(){
 	var gs = JSON.parse(localStorage.getItem('general_settings'));
 	var versionString = KmUiBackend.engine.version + ' build ' +  KmUiBackend.engine.build;
@@ -37,6 +35,7 @@ window.onload = function(){
 
 // Global vars
 var password = null;
+var updateShown = false;
 
 // UI/DOM manipulators
 var KmUiDom = {
@@ -167,6 +166,15 @@ var KmUiBackend = {
 		var pf = JSON.parse(localStorage.getItem('profanity_filter'));
 		KmUiDom.get("pf_status").checked = pf.enabled || false;
 		KmUiPref.itemToggle('pf_status', ["lst_pf"]);
+		if (pf.customCensor){
+			KmUiDom.get("censordefault").checked = false;
+			KmUiDom.get("censorcustom").checked = true;
+			KmUiDom.get("censorstring").disabled = false;
+			KmUiDom.get("censorstring").value = pf.censorString || "*****";
+		} else {
+			KmUiDom.get("censorcustom").checked = false;
+			KmUiDom.get("censordefault").checked = true;
+		}
 		
 		var gs = JSON.parse(localStorage.getItem('general_settings'));
 		password = gs.password.hash;
@@ -232,12 +240,17 @@ var KmUiBackend = {
 				reason : KmUiDom.get("adv_reason").checked,
 				redirectstatus : KmUiDom.get("adv_redirect").checked,
 				redirect : (function(){
-					var adv_redirect = $('#val_redirect #input').val() || "",
-							regex = /^(https?|ftp|file):\/\/.+$/i;
-					if(adv_redirect.length > 0 && !regex.test(adv_redirect)){
-						adv_redirect = "http://" + adv_redirect;
+					if (KmUiDom.get("adv_redirect").checked) {
+						var adv_redirect = $('#val_redirect #input').val() || "",
+								regex = /^(https?|ftp|file):\/\/.+$/i;
+						if(adv_redirect.length > 0 && !regex.test(adv_redirect)){
+							adv_redirect = "http://" + adv_redirect;
+						}
+						return adv_redirect;
+					} else {
+						var x = "";
+						return x;
 					}
-					return adv_redirect;
 				})()
 			},
 			block : {
@@ -251,7 +264,9 @@ var KmUiBackend = {
 
 		var profanity_filter = {
 			enabled : KmUiDom.get("pf_status").checked,
-			words : list_pf
+			words : list_pf,
+			customCensor: KmUiDom.get("censorcustom").checked,
+			censorString: KmUiDom.get("censorstring").value
 		};
 
 		//reference to background.html
@@ -281,8 +296,37 @@ var KmUiBackend = {
 		KmUiBackend.saveOptions();
 	},
 	engine: {
-		"version": "0.2",
-		"build": "070915"
+		"version": "0.3-rc1",
+		"build": "071015"
+	},
+	updateCheck: function(){
+		$('#checkspin').fadeIn(400);
+		$('#updatestatus').fadeOut(1);
+		KmUiDom.get('updatestatus').innerHTML = ' ';
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://dl.aureljared.tk/kaomojify/version', true);
+		xhr.send();
+
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				var vers = xhr.responseText.replace(/\r?\n|\r/g, '');
+				var infoBody;
+				if (vers == KmUiBackend.engine.version)
+					infoBody = 'Hooray! You have the latest version.';
+				else {
+					var changelogUrl = 'https://github.com/aureljared/kaomojify/releases/tag/v' + vers;
+					var downloadUrl = 'http://dl.aureljared.tk/kaomojify/kaomojify-' + vers + '.crx';
+					infoBody = 'Version ' + vers + ' has been released. Click <a href="' + changelogUrl + '" target="_blank" style="color:blue;">here</a> to view the changelog, or click <a href="' + downloadUrl + '" style="color:blue;">here</a> to download the update.';
+				}
+				setTimeout(function(){
+					$('#checkspin').fadeOut({
+						duration: 400,
+						start: function(){KmUiDom.get('updatestatus').innerHTML = infoBody;},
+						complete: function(){$('#updatestatus').fadeIn();}
+					})
+				}, 1500);
+			}
+		};
 	}
 };
 
@@ -384,12 +428,22 @@ KmUiEvent.add(document, 'DOMContentLoaded', function(){
 	KmUiEvent.click('lst_pf', function(){KmUiDom.toggle('#profanitylist');});
 	KmUiEvent.click('btn_reset', function(){KmUiBackend.resetOptions();});
 	KmUiEvent.click('setpass', function(){KmUiBackend.setPassword();});
+	KmUiEvent.click('checkup', function(){
+		KmUiDom.toggle('#checkprog');
+		updateShown = !updateShown;
+		if (updateShown)
+			KmUiBackend.updateCheck();
+	});
 	KmUiEvent.click('btn_save', function(){KmUiBackend.saveOptions();});
 	KmUiEvent.click('bitcoin', function(){KmUiDom.toggle('#btc');});
 	KmUiEvent.click('cf_status', function(){KmUiPref.itemToggle('cf_status', [
 		"adv_stop", "adv_reason", "adv_warning", "adv_redirect", "val_redirect",
 		"lst_bs", "lst_ts", "lst_bk"
 	])});
-	KmUiEvent.click('pf_status', function(){KmUiPref.itemToggle('pf_status', ["lst_pf"])});
+	KmUiEvent.click('pf_status', function(){KmUiPref.itemToggle('pf_status', [
+		"lst_pf", "censordefault", "censorcustom", "censorstring"
+	]);console.log('hey')});
+	KmUiEvent.click('censordefault', function(){KmUiDom.get('censorstring').disabled = true;});
+	KmUiEvent.click('censorcustom', function(){KmUiDom.get('censorstring').disabled = false;});
 	$('paper-button#addbtn').click(function(){KmUiPref.addKeyword($(this).attr('target-list'), $(this).attr('keyword-type'));});
 });

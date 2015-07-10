@@ -109,6 +109,16 @@
 						<paper-button id="addbtn" keyword-type="word" target-list="list_pf" style="color:green;">Add...</paper-button>
 						<div id="profanity_word"></div>
 					</div>
+					<div class="card-section">
+						<label>Display censored text as</label>
+						<paper-radio-group selected="default">
+							<paper-radio-button id="censordefault" name="default">Kaomojis (default)</paper-radio-button>
+							<paper-radio-button id="censorcustom" name="custom">Custom string</paper-radio-button>
+						</paper-radio-group>
+						<div id="censorfield">
+							<paper-input id="censorstring" disabled label="HTML markup is not supported."></paper-input>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="card">
@@ -117,6 +127,14 @@
 					<div class="card-section">
 						<label>Reset Kaomojify</label>
 						<paper-button style="color:red;" id="btn_reset">Reset...</paper-button>
+					</div>
+					<div class="card-section">
+						<label>Check for updates</label>
+						<paper-button id="checkup">Check now</paper-button>
+						<div id="checkprog" style="padding-top:10px;display:none;">
+							<paper-spinner id="checkspin" active></paper-spinner>
+							<p id="updatestatus" style="display:none;"></p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -131,7 +149,7 @@
 							<paper-button><a href="https://aureljared.tk/projects/kaomojify" target="_blank" title="homepage">Visit project page</a></paper-button>
 							<paper-button id="bitcoin">Donate via Bitcoin</paper-button>
 							<div id="btc" style="display:none;">
-								<p><code>3NbsP1zgen4K5RBxpwD15TNKExoKGZSXyM</code></p>
+								<p>Bitcoin address: <code>3NbsP1zgen4K5RBxpwD15TNKExoKGZSXyM</code></p>
 							</div>
 						</div>
 					</div>

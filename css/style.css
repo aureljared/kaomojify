@@ -26,7 +26,6 @@ body {
 	left: calc(50% - 275px);
 }
 
-
 #logintitle, a, a:hover, a:focus {
 	-webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
@@ -79,7 +78,7 @@ header {
     font-weight: 400;
     color: #909090;
 }
-.card-section { padding-bottom: 40px; }
+.card-section { padding-bottom: 30px; }
 .style-scope .paper-input, label { font-size: 14px !important; }
 paper-toggle-button { margin-bottom: -2px; float: right; }
 
@@ -101,18 +100,19 @@ paper-toggle-button { margin-bottom: -2px; float: right; }
 }
 #dialog {
 	position: fixed;
-	width: 300px;
+	width: 350px;
 	height: 150px;
 	border-radius: 4px;
 	top: calc(50% - 75px);
-    left: calc(50% - 150px);
+    left: calc(50% - 175px);
 	z-index: 9;
 	background-color: #fff;
 }
 .dialog-body {
 	position: absolute;
-    left: 30px;
-    top: 10px;
+	padding: 10px 30px;
+    height: 130px;
+    width: 300px;
 }
 .listsplice {
 	padding-left: 15px;
@@ -121,4 +121,4 @@ paper-toggle-button { margin-bottom: -2px; float: right; }
 	text-transform: uppercase;
 }
 .keywordform { margin-top: -25px; }
-#dialog-buttons { float: right; margin-left: 105px; }
+#dialog-buttons { float: right; margin-right: -5px;; }

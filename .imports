@@ -1,8 +1,9 @@
 # Bower imports
 poly=(
 	paper-ripple/paper-ripple.html
-	paper-fab/paper-fab.html
 	paper-button/paper-button.html
+	paper-spinner/paper-spinner.html
+	paper-radio-group/paper-radio-group.html
 	paper-input/paper-input.html
 	paper-toast/paper-toast.html
 	paper-toggle-button/paper-toggle-button.html
@@ -14,9 +15,16 @@ js=(
 	js/options.js
 	js/jquery.min.js
 )
+# CSS files from Bower
+bowercss=(
+	paper-toggle-button
+	paper-radio-button
+	paper-spinner
+)
 # For minification
 minq=(
 	.bower/paper-toggle-button/paper-toggle-button.css
+	.bower/paper-radio-button/paper-radio-button.css
 	css/style.css
 	js/options.js
 	js/background.js
@@ -25,5 +33,7 @@ minq=(
 	js/popup.js
 	js/site.js
 	js/polymer.js
+	js/defaults.js
 	popup.html
+	bg.html
 )

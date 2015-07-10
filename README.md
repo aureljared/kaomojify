@@ -3,7 +3,7 @@ kaomojify
 
 **Kaomojify** is a highly customizable website filter for Google Chrome, based on Hunter Paolini's [tinyFilter extension.](https://github.com/hpaolini/tinyFilter-chrome)
 
-Kaomojify matches all words in its profanity list (`default.txt`) and replaces them with a random selection from 300 kaomojis, all from [Emot.es.](http://emot.es). Kaomojify has over 350 entries in its profanity list.
+Kaomojify matches all words in its profanity list (`default.txt`) and replaces them with a random selection from 300 kaomojis, all from [Emot.es](http://emot.es). Kaomojify has around 350 entries in its profanity list.
 
 It also has the ability to block access to websites the user specifies, making it ideal for children.
 
@@ -13,7 +13,7 @@ Unfortunately I'm not able to upload Kaomojify to the Chrome Web Store, because 
 
 The only way to install Kaomojify on Chrome 33+ right now is through these steps:
 
-1. Download Kaomojify from [this link.](https://dl.aureljared.tk/kaomojify-0.2.crx)
+1. Download the latest version of Kaomojify from [this link.](https://dl.aureljared.tk/kaomojify-0.3-rc1.crx)
 2. When Chrome finishes downloading the `.crx` file, it will give you an error saying that you can't install anything from this website.
 3. Open the Chrome menu and go to **More tools > Extensions.**
 4. When the Extensions page loads, go to where Chrome downloaded the `.crx` file and drag that file into the Extensions page.
@@ -33,6 +33,6 @@ However, with this approach, auto-update does not work at the moment; because Ch
 - [x] Rename project to Kaomojify
 - [x] Use random kaomojis in place of "***"
 - [x] Material UI
+- [x] Update check
+- [x] Add option to choose between kaomojis, asterisks, and custom string for censoring profanity
 - [ ] **Bugfixes, optimizations, etc.**
-- [ ] Add option to choose between kaomojis, asterisks, and custom string for censoring profanity
-- [ ] Update mechanism for kaomoji and profanity databases

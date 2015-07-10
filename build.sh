@@ -12,9 +12,9 @@ dist=(
 	js
 	img
 	options.html
+	bg.html
 	popup.html
 	manifest.json
-	default.txt
 	LICENSE.txt
 )
 # clear && printf '\e[3J'
@@ -76,7 +76,11 @@ for f in ${js[@]}; do
 done
 echo "</body></html>" >> "$ouh"
 echo "[*] Copying files into distribution folder."
-mkdir -p dist/.bower/paper-toggle-button
+for f in ${bowercss[@]}; do
+	echo "    ==> .bower/$f/$f.css"
+	mkdir -p dist/.bower/$f
+	cp -fp .bower/$f/$f.css dist/.bower/$f/
+done
 for f in ${dist[@]}; do
 	echo "    ==> $f"
 	cp -fpr "$f" dist/
