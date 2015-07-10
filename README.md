@@ -13,7 +13,7 @@ Unfortunately I'm not able to upload Kaomojify to the Chrome Web Store, because 
 
 The only way to install Kaomojify on Chrome 33+ right now is through these steps:
 
-1. Download the latest version of Kaomojify from [this link.](https://dl.aureljared.tk/kaomojify-0.3-rc1.crx)
+1. Download the latest version of Kaomojify from [this link.](http://dl.aureljared.tk/kaomojify-0.3-rc1.crx)
 2. When Chrome finishes downloading the `.crx` file, it will give you an error saying that you can't install anything from this website.
 3. Open the Chrome menu and go to **More tools > Extensions.**
 4. When the Extensions page loads, go to where Chrome downloaded the `.crx` file and drag that file into the Extensions page.
