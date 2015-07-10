@@ -1,9 +1,11 @@
 #!/bin/bash
 function showHelp() {
-	echo "Usage: `basename $0` <input html> <output html>"
+	echo "Usage: `basename $0` <input html> <output html> [--minify]"
 	echo "To show help, execute `basename $0` -h"
 	echo "This script requires the vulcanize and the crisper utilities."
 	echo "Install them by \"sudo npm install -g vulcanize crisper\"."
+	echo "The minification process requires the minify utility."
+	echo "Install it by \"sudo npm install -g minify\"."
 }
 dist=(
 	css
@@ -15,10 +17,10 @@ dist=(
 	default.txt
 	LICENSE.txt
 )
-clear && printf '\e[3J'
+# clear && printf '\e[3J'
 inh="$1"
 ouh="$ouh"
-if [[ ! $1 ]]; then
+if [[ ! $1 ]] || [[ $1 == "--minify" ]]; then
 	echo "Warning: Missing arguments. Assuming defaults: index.html, options.html."
 	echo "To show help, execute `basename $0` -h."
 	echo
@@ -28,13 +30,15 @@ if [[ ! $1 ]]; then
 		exit 1
 	fi
 	ouh="options.html"
-elif [[ $1 != "" ]] && [[ ! $ouh ]]; then
+elif [[ $1 != "" ]] && [[ $1 != "-h" ]] && [[ ! $ouh ]]; then
 	echo "Warning: Missing output file. Assuming default: options.html."
 	ouh="options.html"
 elif [[ $1 == "-h" ]]; then
 	showHelp
 	exit 0
 fi
+
+if [[ $(echo "$@" | grep -e '--minify') != "" ]]; then min=1; fi
 
 # Build tools
 vul=`which vulcanize`
@@ -62,7 +66,7 @@ done
 
 # Build
 if [[ -e "$ouh" ]]; then rm -f "$ouh"; fi
-echo "[*] Vulcanizing and stripping inline scripts into \"js/polymer-project.js\"."
+echo "[*] Vulcanizing and stripping inline scripts into \"js/polymer.js\"."
 $vul --inline-scripts .output.html | $csp --html "$ouh.tmp" --js js/polymer.js
 echo "[*] Importing external scripts."
 cat "$ouh.tmp" | sed 's/<\/body><\/html>//' > "$ouh"
@@ -70,6 +74,7 @@ for f in ${js[@]}; do
 	echo "    ==> $f"
 	echo "<script type='text/javascript' src='$f'></script>" >> "$ouh"
 done
+echo "</body></html>" >> "$ouh"
 echo "[*] Copying files into distribution folder."
 mkdir -p dist/.bower/paper-toggle-button
 for f in ${dist[@]}; do
@@ -78,17 +83,18 @@ for f in ${dist[@]}; do
 done
 echo "    ==> .bower/paper-toggle-button/paper-toggle-button.css"
 cp -fp .bower/paper-toggle-button/paper-toggle-button.css dist/.bower/paper-toggle-button/
-echo "[*] Minifying."
-cd dist
-for f in ${minq[@]}; do
-	echo "    ==> $f"
-	minify "$f" > .minified
-	rm -f "$f"
-	mv .minified "$f"
-done
-cd ../
+if [[ $min -eq 1 ]]; then
+	echo "[*] Minifying."
+	cd dist
+	for f in ${minq[@]}; do
+		echo "    ==> $f"
+		minify "$f" > .minified
+		rm -f "$f"
+		mv .minified "$f"
+	done
+	cd ../
+fi
 echo "[*] Cleaning up."
-echo "</body></html>" >> "$ouh"
-rm -f .output.html "$ouh.tmp" js/..html dist/js/..html
+rm -f .output.html "$ouh.tmp" js/..html dist/js/..html "$ouh"
 echo -e "\nComplete. Total unpacked extension size is approx. `du -k -s dist | cut -f 1` kilobytes"
 exit 1

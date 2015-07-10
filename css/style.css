@@ -1,4 +1,4 @@
-html { overflow-x: hidden; overflow-y: hidden; }
+html { overflow-x: hidden; }
 body {
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -6,55 +6,52 @@ body {
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-size: 12px;
     color: #000;
-    width: 400px;
+    width: 550px;
     margin: 0 auto;
 }
-#content { padding: 70px 10px 10px 10px; }
+#content { padding: 120px 10px 10px 10px; }
 
 .login {
+	left: 0;
 	position: fixed;
-	width: 400px;
+	width: 100%;
 	height: 100%;
 	z-index: 10;
 	background-color: #fff;
 }
 .login-body {
 	position: absolute;
-	left: 50px;
+	width: 550px;
 	top: 150px;
+	left: calc(50% - 275px);
 }
-#loginpw { width: 300px; }
 
 
 #logintitle, a, a:hover, a:focus {
 	-webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
-a, a:hover, a:focus { text-decoration: none; }
+a, a:hover, a:focus { text-decoration: none; color: #000; }
 
 header {
-	width: 400px;
-	height: 45px;
-	background-color: #512DA8;
+	width: 550px;
+	height: 95px;
+	background-color: #fff;
 	font-weight: 300;
-	box-shadow: 0px 0px 3px black;
+	border-bottom: 1px solid gray;
 	position: fixed;
 	z-index: 5;
 }
-header > div {
+.header-title, .header-save {
 	position: absolute;
-	top: 11px;
-	padding-left: 20px;
-	color: #fff;
+	top: 60px;
+	color: #000;
 }
-#fab {
-	position: fixed;
-	width: 50px;
-	height: 50px;
-	bottom: 25px;
-	right: 25px;
+.header-save {
+	top: 57px;
+	right: 0;
+	font-weight: 400;
 }
-#fab > paper-fab > paper-material { padding: 0; }
 
 .name {
 	font-size: 18px;
@@ -74,7 +71,7 @@ header > div {
 .card {
 	margin-bottom: 8px;
 	margin-left: -10px;
-	width: 400px;
+	width: 550px;
 }
 .card-content { padding: 0px 20px; }
 .card-title {
@@ -95,11 +92,12 @@ paper-toggle-button { margin-bottom: -2px; float: right; }
 }
 #dialog-bg {
 	position: fixed;
-	width: 400px;
+	width: 100%;
 	height: 100%;
 	background-color: rgba(0,0,0,0.4);
 	z-index: 8;
 	top: 0;
+	left: 0;
 }
 #dialog {
 	position: fixed;
@@ -114,7 +112,7 @@ paper-toggle-button { margin-bottom: -2px; float: right; }
 .dialog-body {
 	position: absolute;
     left: 30px;
-    top: 17px;
+    top: 10px;
 }
 .listsplice {
 	padding-left: 15px;

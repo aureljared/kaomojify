@@ -18,7 +18,8 @@ chrome.tabs.getSelected(null,function(tab){
 });
 }
 
-var crxopts = 'chrome://extensions/?options=' + chrome.runtime.id;
+// var crxopts = 'chrome://extensions/?options=' + chrome.runtime.id;
+var crxopts = 'options.html';
 window.addEventListener('DOMContentLoaded', function(e){
   document.getElementById("btn_ppbs").addEventListener("click", function(){
     actionSite(0);

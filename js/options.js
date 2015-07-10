@@ -14,46 +14,20 @@ window.onload = function(){
 	var gs = JSON.parse(localStorage.getItem('general_settings'));
 	var versionString = KmUiBackend.engine.version + ' build ' +  KmUiBackend.engine.build;
 	if (gs.password.hash.length > 0) {
-		var rClHandler = function(e){e.preventDefault();};
-		document.addEventListener('contextmenu', rClHandler);
-		$('#loginpage').fadeIn(2);
-		$('#pwfield').slideDown();
-		document.getElementById('validatePass').addEventListener('click', function(){
-			var enteredPw = $('#pwentry #input').val();
-			if (enteredPw != "" && enteredPw != null) {
-				if (Crypto.SHA256(enteredPw) == gs.password.hash) {
-					// Generate random placeholder password
-					var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-					var text = "";
-					for (var i = 0; i < enteredPw.length; i++) {
-					    text += possible.charAt(Math.floor(Math.random() * possible.length));
-					}
-					KmUiDom.get("newpw").value = text;
-
-					$('#loginpage').fadeOut(250);
-					KmUiBackend.restoreOptions();
-		 			document.getElementById('version').innerHTML = versionString;
-		 			document.body.style.display = "block !important";
-		 			document.removeEventListener('contextmenu', rClHandler);
-				} else {
-					$('#pwentry #input').val('');
-					document.getElementById('logintitle').innerHTML = 'Incorrect password.';
-					$('#logintitle').css('color', 'red');
-					setTimeout(function(){
-						document.getElementById('logintitle').innerHTML = 'Kaomojify is password protected.';
-						$('#logintitle').css('color', 'black');
-					}, 3000);
-				}
-			} else {
-				$('#pwentry #input').val('');
-				document.getElementById('logintitle').innerHTML = 'Password cannot be blank.';
-				$('#logintitle').css('color', 'red');
-				setTimeout(function(){
-					document.getElementById('logintitle').innerHTML = 'Kaomojify is password protected.';
-					$('#logintitle').css('color', 'black');
-				}, 5000);
+		KmUiEvent.openLogin('Kaomojify is password-protected.', function(enteredPw){
+			document.getElementsByTagName('html')[0].removeAttribute('style');
+			// Generate random placeholder password
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			var text = "";
+			for (var i = 0; i < enteredPw.length; i++) {
+			    text += possible.charAt(Math.floor(Math.random() * possible.length));
 			}
+			KmUiDom.get("newpw").value = text;
+			KmUiBackend.restoreOptions();
+		 	KmUiDom.get('version').innerHTML = versionString;
+		 	document.body.style.display = "block !important";
 		});
+		$('#pwfield').slideDown();
 	} else {
 		document.getElementById('version').innerHTML = versionString;
 		KmUiBackend.restoreOptions();
@@ -82,7 +56,7 @@ var KmUiDom = {
 		var el = this.get(el);
 		el.parentNode.removeChild(el);
 	},
-	toggle: function(el) { $(el).slideToggle(250); }
+	toggle: function(el) { $(el).slideToggle(); }
 }
 var KmUiPref = {
 	populateList: function(list,keyword){
@@ -154,6 +128,19 @@ var KmUiPref = {
 			if(list[len] == word)
 				list.splice(len,1);
 		}
+	},
+	itemToggle: function(toggle,depends){
+		for (var i = 0; i < depends.length; i++) {
+			var element = KmUiDom.get(depends[i]);
+			var catalyst = KmUiDom.get(toggle);
+			element.disabled = !catalyst.checked;
+		}
+	},
+	itemsDisable: function(depends){
+		for (var i = 0; i < depends.length; i++) {
+			var disableElement = document.getElementById(depends[i]);
+			disableElement.disabled = true;
+		}
 	}
 };
 
@@ -161,18 +148,25 @@ var KmUiPref = {
 var KmUiBackend = {
 	restoreOptions: function(){
 		var cf = JSON.parse(localStorage.getItem('content_filter'));
+		var cfdepends = [
+			"adv_stop", "adv_reason", "adv_warning", "adv_redirect", "val_redirect",
+			"lst_bs", "lst_ts", "lst_bk"
+		];
 		KmUiDom.get("cf_status").checked = cf.enabled || false;
+		KmUiPref.itemToggle('cf_status', cfdepends);
 		KmUiDom.get("adv_stop").checked = cf.advanced.stop_all || false;
 	 	KmUiDom.get("adv_reason").checked = cf.advanced.reason || false;
 	 	KmUiDom.get("adv_warning").value = cf.advanced.warning;
 	 	KmUiDom.get("adv_redirect").checked = cf.advanced.redirectstatus || false;
-	 	if (KmUiDom.get("adv_redirect").checked) {
-	 		$('#redirfield').slideDown(250);
-	 	}
 	 	KmUiDom.get("val_redirect").value = cf.advanced.redirect;
+		if (KmUiDom.get("cf_status").checked == false)
+			KmUiPref.itemsDisable(cfdepends);
+		if (KmUiDom.get("adv_redirect").checked)
+	 		$('#redirfield').slideDown(250);
 		
 		var pf = JSON.parse(localStorage.getItem('profanity_filter'));
 		KmUiDom.get("pf_status").checked = pf.enabled || false;
+		KmUiPref.itemToggle('pf_status', ["lst_pf"]);
 		
 		var gs = JSON.parse(localStorage.getItem('general_settings'));
 		password = gs.password.hash;
@@ -197,28 +191,36 @@ var KmUiBackend = {
 		};
 	},
 	resetOptions: function(){
+		var gs = JSON.parse(localStorage.getItem('general_settings'));
 		KmUiEvent.openDialog('Reset Kaomojify?', '<h4>This cannot be undone!</h4>', function(){
 			// do nothing
 		}, function(){
-			$('#dialog-buttons').fadeOut({
-				duration: 100,
-				start: function(){
-					$('#header').fadeOut(100);
-					$('#fab').fadeOut(100);
-					$('#content').fadeOut(100);
-				}
-			});
-			KmUiDom.get('dialog-title').innerHTML = 'Resetting Kaomojify'
-			KmUiDom.get('dialog-body').innerHTML = 'Please wait...'
-			localStorage.removeItem('general_settings');
-			localStorage.removeItem('content_filter');
-			localStorage.removeItem('profanity_filter');
-			setTimeout(function(){
-				KmUiEvent.closeDialog(function(){setTimeout(function(){
-					chrome.extension.getBackgroundPage().KmBackground.init();
-					window.location.reload();
-				},1);});
-			}, 1000);
+			var resetKaomojify = function(){
+				$('#dialog-buttons').fadeOut({
+					duration: 100,
+					start: function(){
+						$('#header').fadeOut(100);
+						$('#fab').fadeOut(100);
+						$('#content').fadeOut(100);
+					}
+				});
+				KmUiDom.get('dialog-title').innerHTML = 'Resetting Kaomojify'
+				KmUiDom.get('dialog-body').innerHTML = 'Please wait...'
+				localStorage.removeItem('general_settings');
+				localStorage.removeItem('content_filter');
+				localStorage.removeItem('profanity_filter');
+				setTimeout(function(){
+					KmUiEvent.closeDialog(function(){setTimeout(function(){
+						chrome.extension.getBackgroundPage().KmBackground.init();
+						window.location.reload();
+					},1);});
+				}, 1000);
+			};
+
+			if (gs.password.hash.length > 0)
+				KmUiEvent.openLogin('Enter your password to continue.', resetKaomojify);
+			else
+				resetKaomojify();
 		}, 'confirm');
 	},
 	saveOptions: function(){
@@ -307,7 +309,6 @@ var KmUiEvent = {
 		KmUiDom.get('dialog-yes').innerHTML = confirm;
 		KmUiEvent.click('dialog-yes', positive);
 		KmUiEvent.click('dialog-no', KmUiEvent.closeDialog);
-		$('#dialog-ui').fadeIn(250);
 		$('#dialog-bg').fadeIn(250);
 		$('#dialog').fadeIn(250);
 		KmUiDom.get('dialog-title').innerHTML = title;
@@ -324,19 +325,59 @@ var KmUiEvent = {
 			complete();
 	},
 	closeDialog: function(action){
+		console.log(typeof(action));
 		$('#dialog').fadeOut(250);
 		$('#dialog-bg').fadeOut(250);
-		$('#dialog-ui').fadeOut(250);
 		if (action == null)
 			return true;
 		else
 			action();
+	},
+	openLogin: function(message,success){
+		var gs = JSON.parse(localStorage.getItem('general_settings'));
+		var rClHandler = function(e){e.preventDefault();};
+		document.addEventListener('contextmenu', rClHandler);
+		$('#loginpage').fadeIn({
+			duration: 1,
+			start: function(){$('#pwentry #input').val('');},
+			complete: function(){$('#loginentry').fadeIn(250);}
+		});
+		document.getElementsByTagName('html')[0].setAttribute('style', 'overflow-y:hidden;');
+		KmUiDom.get('validatePass').addEventListener('click', function(){
+			var enteredPw = $('#pwentry #input').val();
+			if (enteredPw != "" && enteredPw != null) {
+				if (Crypto.SHA256(enteredPw) == gs.password.hash) {
+					$('#loginpage').fadeOut({
+						duration: 250,
+						start: function(){$('#loginentry').fadeOut(250);}
+					});
+		 			document.removeEventListener('contextmenu', rClHandler);
+		 			success(enteredPw);
+				} else {
+					$('#pwentry #input').val('');
+					KmUiDom.get('logintitle').innerHTML = 'Incorrect password.';
+					$('#logintitle').css('color', 'red');
+					setTimeout(function(){
+						KmUiDom.get('logintitle').innerHTML = message;
+						$('#logintitle').css('color', 'black');
+					}, 3000);
+				}
+			} else {
+				$('#pwentry #input').val('');
+				KmUiDom.get('logintitle').innerHTML = 'Password cannot be blank.';
+				$('#logintitle').css('color', 'red');
+				setTimeout(function(){
+					KmUiDom.get('logintitle').innerHTML = message;
+					$('#logintitle').css('color', 'black');
+				}, 5000);
+			}
+		});
 	}
 };
 KmUiEvent.add(document, 'DOMContentLoaded', function(){
 	KmUiEvent.click('pwd_status', function(){KmUiDom.toggle('#pwfield');});
 	KmUiEvent.click('adv_reason', function(){KmUiDom.toggle('#reasonfield');});
-	KmUiEvent.click('adv_redirect', function(){KmUiDom.toggle('#val_redirect');});
+	KmUiEvent.click('adv_redirect', function(){KmUiDom.toggle('#redirfield');});
 	KmUiEvent.click('lst_bs', function(){KmUiDom.toggle('#siteblacklist');});
 	KmUiEvent.click('lst_ts', function(){KmUiDom.toggle('#sitewhitelist');});
 	KmUiEvent.click('lst_bk', function(){KmUiDom.toggle('#wordblacklist');});
@@ -345,5 +386,10 @@ KmUiEvent.add(document, 'DOMContentLoaded', function(){
 	KmUiEvent.click('setpass', function(){KmUiBackend.setPassword();});
 	KmUiEvent.click('btn_save', function(){KmUiBackend.saveOptions();});
 	KmUiEvent.click('bitcoin', function(){KmUiDom.toggle('#btc');});
+	KmUiEvent.click('cf_status', function(){KmUiPref.itemToggle('cf_status', [
+		"adv_stop", "adv_reason", "adv_warning", "adv_redirect", "val_redirect",
+		"lst_bs", "lst_ts", "lst_bk"
+	])});
+	KmUiEvent.click('pf_status', function(){KmUiPref.itemToggle('pf_status', ["lst_pf"])});
 	$('paper-button#addbtn').click(function(){KmUiPref.addKeyword($(this).attr('target-list'), $(this).attr('keyword-type'));});
 });

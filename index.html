@@ -14,9 +14,9 @@
 		<link rel="stylesheet" href="css/style.css" type="text/css"/>
 		<!-- build.sh - imports -->
 	</head>
-	<body style="height:500px" tabindex="1">
+	<body tabindex="1">
 		<div id="loginpage" class="login" style="display:none;">
-			<div class="login-body">
+			<div class="login-body" id="loginentry" style="display:none;">
 				<h1 id="logintitle" style="margin-bottom:0;">Kaomojify is password-protected.</h1>
 				<div id="loginpw">
 					<paper-input id="pwentry" type="password" label="Enter password"></paper-input>
@@ -25,8 +25,11 @@
 			</div>
 		</div>
 		<header id="header">
-			<div>
+			<div class="header-title">
 				<span class="name">Kaomojify <span class="auth" id="version"></span></span>
+			</div>
+			<div class="header-save">
+				<paper-button id="btn_save">save preferences</paper-button>
 			</div>
 		</header>
 		<div id="content">
@@ -35,21 +38,21 @@
 					<div class="card-title">Extension security</div>
 					<div class="card-section">
 						<div>
-							<label>Enable password</label>
+							<label>Enable password protection</label>
 							<paper-toggle-button id="pwd_status"></paper-toggle-button>
 						</div>
 						<div id="pwfield" style="display:none;margin-top:-5px;">
 							<paper-input id="newpw" type="password" label="Max. 120 characters"></paper-input>
-							<paper-button id="setpass" style="float:right;">save</paper-button>
+							<paper-button id="setpass" style="float:right;">set</paper-button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="card">
 				<div class="card-content">
-					<div class="card-title">Content Filter settings</div>
+					<div class="card-title">Content filter settings</div>
 					<div class="card-section">
-						<label>Enable Content Filter</label>
+						<label>Enable content filter</label>
 						<paper-toggle-button checked id="cf_status"></paper-toggle-button>
 					</div>
 					<div class="card-section">
@@ -71,12 +74,10 @@
 						</div>
 					</div>
 					<div class="card-section">
-						<label>Edit filter lists</label><br/>
-						<div style="padding-top:10px;">
-							<paper-button id="lst_bs">Blocked Sites</paper-button>
-							<paper-button id="lst_ts">Trusted Sites</paper-button>
-							<paper-button id="lst_bk">Keywords</paper-button>
-						</div>
+						<label>Edit filter lists</label>
+						<paper-button id="lst_bs">Blocked Sites</paper-button>
+						<paper-button id="lst_ts">Trusted Sites</paper-button>
+						<paper-button id="lst_bk">Keywords</paper-button>
 					</div>
 					<div class="card-section" id="siteblacklist" style="display:none;">
 						<label>Blocked sites</label>
@@ -128,7 +129,7 @@
 							<label>Made with &#9829; by Aurel Jared Dantis.</label><br/><br/>
 							<paper-button><a href="https://aureljared.tk/" target="_blank" title="homepage">Visit my page</a></paper-button>
 							<paper-button><a href="https://aureljared.tk/projects/kaomojify" target="_blank" title="homepage">Visit project page</a></paper-button>
-							<br/><paper-button id="bitcoin">Donate via Bitcoin</paper-button>
+							<paper-button id="bitcoin">Donate via Bitcoin</paper-button>
 							<div id="btc" style="display:none;">
 								<p><code>3NbsP1zgen4K5RBxpwD15TNKExoKGZSXyM</code></p>
 							</div>
@@ -138,7 +139,7 @@
 			</div>
 			<paper-toast text="Hello World!" id="status"></paper-toast>
 		</div>
-		<div id="dialog-ui" style="display:none;">
+		<div id="dialog-ui">
 			<div id="dialog-bg" style="display:none;"></div>
 			<div id="dialog" style="display:none;">
 				<div class="dialog-body">
@@ -151,6 +152,5 @@
 				</div>
 			</div>
 		</div>
-		<div id="fab"><paper-fab id="btn_save" icon="save"></paper-fab></div>
 	</body>
 </html>

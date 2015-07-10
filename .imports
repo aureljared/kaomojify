@@ -25,4 +25,5 @@ minq=(
 	js/popup.js
 	js/site.js
 	js/polymer.js
+	popup.html
 )
